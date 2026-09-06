@@ -48,7 +48,7 @@ def chat():
     try:
         client = Groq(api_key=api_key)
         response = client.chat.completions.create(
-            model="llama-3.1-8b-instant",
+            model="llama3-8b-8192",
             messages=formatted_messages,
             temperature=0.7,
             max_tokens=800
@@ -57,7 +57,7 @@ def chat():
         return jsonify({"answer": answer})
     except Exception as e:
         print(f"Groq API Error: {str(e)}")
-        return jsonify({"answer": f"حدث خطأ أثناء الاتصال بالذكاء الاصطناعي: {str(e)}"}), 500
+        return jsonify({"answer": "عذراً، حدث انقطاع مؤقت في الاتصال بالخادم. يرجى المحاولة بعد لحظات."}), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
