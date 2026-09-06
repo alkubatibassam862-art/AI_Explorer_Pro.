@@ -7,15 +7,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&family=Readex+Pro:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-dark: #070a12;
-            --card-bg: rgba(15, 23, 42, 0.75);
-            --glass-border: rgba(99, 102, 241, 0.25);
+            --bg-dark: #05070f;
+            --card-bg: rgba(13, 20, 36, 0.7);
+            --glass-border: rgba(99, 102, 241, 0.3);
             --primary-glow: #6366f1;
             --accent-cyan: #06b6d4;
+            --accent-purple: #a855f7;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
-            --user-msg: linear-gradient(135deg, #4f46e5, #7c3aed);
-            --bot-msg: rgba(30, 41, 59, 0.85);
+            --user-msg: linear-gradient(135deg, #4f46e5, #9333ea);
+            --bot-msg: rgba(26, 35, 58, 0.85);
         }
 
         * {
@@ -32,161 +33,244 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.18) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.15) 0%, transparent 40%);
             padding: 20px;
+            overflow-x: hidden;
+            position: relative;
         }
 
-        /* Container Grid Layout */
+        /* Animated Futuristic Background */
+        .bg-glow {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            z-index: -1;
+            animation: pulse 8s infinite alternate;
+        }
+        .glow-1 { top: -10%; left: -10%; width: 500px; height: 500px; background: rgba(99, 102, 241, 0.25); }
+        .glow-2 { bottom: -10%; right: -10%; width: 500px; height: 500px; background: rgba(6, 182, 212, 0.2); }
+        .glow-3 { top: 40%; left: 40%; width: 300px; height: 300px; background: rgba(168, 85, 247, 0.15); }
+
+        @keyframes pulse {
+            0% { transform: scale(1) translate(0, 0); }
+            100% { transform: scale(1.15) translate(30px, -20px); }
+        }
+
         .app-layout {
             width: 100%;
-            max-width: 1200px;
-            height: 90vh;
+            max-width: 1250px;
+            height: 92vh;
             display: grid;
-            grid-template-columns: 320px 1fr;
-            gap: 20px;
+            grid-template-columns: 340px 1fr;
+            gap: 25px;
+            z-index: 1;
         }
 
-        /* Sidebar Glass Card (QR & Info) */
+        /* Sidebar Styling */
         .sidebar {
             background: var(--card-bg);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
             border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 25px;
+            border-radius: 28px;
+            padding: 30px;
             display: flex;
             flex-direction: column;
-            align-items: center;
             justify-content: space-between;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            align-items: center;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
             text-align: center;
+            position: relative;
+            overflow: hidden;
         }
 
-        .sidebar-header {
-            width: 100%;
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-glow), var(--accent-cyan), var(--accent-purple));
         }
 
         .brand-badge {
-            width: 50px;
-            height: 50px;
+            width: 60px;
+            height: 60px;
             background: linear-gradient(135deg, var(--primary-glow), var(--accent-cyan));
-            border-radius: 16px;
+            border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
-            font-weight: bold;
+            font-size: 28px;
+            font-weight: 700;
             margin: 0 auto 15px auto;
-            box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+            box-shadow: 0 0 25px rgba(99, 102, 241, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .sidebar-header h2 {
-            font-size: 1.2rem;
+            font-size: 1.35rem;
             font-weight: 700;
-            background: linear-gradient(90deg, #ffffff, #a5b4fc);
+            background: linear-gradient(90deg, #ffffff, #c7d2fe);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 5px;
+            margin-bottom: 6px;
         }
 
         .sidebar-header p {
-            font-size: 0.8rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* Metrics Display Box */
+        .metrics-box {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .metric-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 14px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .metric-card .val {
+            font-weight: bold;
+            font-size: 0.95rem;
+            color: var(--accent-cyan);
+        }
+
+        .metric-card .lbl {
+            font-size: 0.7rem;
             color: var(--text-muted);
         }
 
         /* QR Code Container */
         .qr-card {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 22px;
             padding: 20px;
             width: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 12px;
-            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .qr-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--primary-glow);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.2);
         }
 
         .qr-img {
-            width: 170px;
-            height: 170px;
-            border-radius: 12px;
+            width: 160px;
+            height: 160px;
+            border-radius: 14px;
             background: #fff;
-            padding: 8px;
-            box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
+            padding: 10px;
+            box-shadow: 0 0 25px rgba(6, 182, 212, 0.3);
         }
 
         .qr-text {
             font-size: 0.8rem;
-            color: #a5b4fc;
+            color: #c7d2fe;
             font-weight: 600;
         }
 
-        .sidebar-footer {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
-            width: 100%;
-            padding-top: 15px;
-        }
-
-        /* Chat Main Area */
+        /* Chat Container */
         .chat-container {
             background: var(--card-bg);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
             border: 1px solid var(--glass-border);
-            border-radius: 24px;
+            border-radius: 28px;
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
         }
 
         .chat-header {
-            padding: 20px 25px;
+            padding: 18px 30px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            background: rgba(10, 15, 26, 0.4);
+            background: rgba(8, 13, 24, 0.5);
             display: flex;
             align-items: center;
             justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
-        .chat-header h1 {
-            font-size: 1.1rem;
-            font-weight: 700;
+        .chat-header-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
         .status-dot {
-            display: inline-block;
             width: 10px;
             height: 10px;
             background: #10b981;
             border-radius: 50%;
-            box-shadow: 0 0 10px #10b981;
-            margin-left: 8px;
+            box-shadow: 0 0 12px #10b981;
+            animation: blink 2s infinite;
+        }
+
+        /* Top Action Controls */
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #fff;
+            padding: 8px 14px;
+            border-radius: 12px;
+            font-size: 0.82rem;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .action-btn:hover {
+            background: var(--primary-glow);
+            border-color: var(--primary-glow);
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
+            transform: translateY(-1px);
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
         }
 
         .chat-area {
             flex: 1;
-            padding: 25px;
+            padding: 30px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 20px;
             scroll-behavior: smooth;
         }
 
         .message {
-            max-width: 80%;
-            padding: 14px 20px;
-            border-radius: 18px;
-            font-size: 0.92rem;
+            max-width: 78%;
+            padding: 16px 22px;
+            border-radius: 20px;
+            font-size: 0.95rem;
             line-height: 1.6;
-            animation: fadeIn 0.3s ease-in-out;
+            animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             word-wrap: break-word;
         }
 
@@ -195,151 +279,265 @@
             background: var(--user-msg);
             color: #fff;
             border-bottom-right-radius: 4px;
-            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+            box-shadow: 0 8px 20px rgba(124, 58, 237, 0.3);
         }
 
         .message.bot {
             align-self: flex-end;
             background: var(--bot-msg);
             color: var(--text-main);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-bottom-left-radius: 4px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
         }
 
         .suggestions {
             display: flex;
             gap: 10px;
             overflow-x: auto;
-            padding: 12px 25px;
-            background: rgba(8, 12, 20, 0.3);
+            padding: 12px 30px;
+            background: rgba(5, 7, 15, 0.4);
             border-top: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .chip {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.04);
             border: 1px solid rgba(255, 255, 255, 0.1);
             color: var(--text-muted);
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.8rem;
+            padding: 10px 18px;
+            border-radius: 22px;
+            font-size: 0.82rem;
             cursor: pointer;
             white-space: nowrap;
-            transition: all 0.2s;
+            transition: all 0.3s;
         }
 
         .chip:hover {
             background: var(--primary-glow);
             color: #fff;
             border-color: var(--primary-glow);
-            box-shadow: 0 0 12px rgba(99, 102, 241, 0.4);
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.5);
+            transform: translateY(-2px);
         }
 
         .input-area {
-            padding: 20px 25px;
-            background: rgba(10, 15, 26, 0.6);
+            padding: 20px 30px;
+            background: rgba(8, 13, 24, 0.7);
             display: flex;
-            gap: 12px;
+            gap: 15px;
         }
 
         .input-area input {
             flex: 1;
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.04);
             border: 1px solid var(--glass-border);
-            padding: 14px 20px;
-            border-radius: 14px;
+            padding: 16px 24px;
+            border-radius: 16px;
             color: #fff;
-            font-size: 0.95rem;
+            font-size: 1rem;
             outline: none;
             transition: all 0.3s;
         }
 
         .input-area input:focus {
             border-color: var(--accent-cyan);
-            box-shadow: 0 0 15px rgba(6, 182, 212, 0.3);
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.35);
+            background: rgba(255, 255, 255, 0.07);
         }
 
         .send-btn {
             background: linear-gradient(135deg, var(--primary-glow), var(--accent-cyan));
             color: #fff;
             border: none;
-            padding: 14px 28px;
-            border-radius: 14px;
-            font-weight: 600;
+            padding: 16px 32px;
+            border-radius: 16px;
+            font-weight: 700;
+            font-size: 0.95rem;
             cursor: pointer;
             transition: all 0.3s;
-            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
         }
 
         .send-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(6, 182, 212, 0.6);
+            box-shadow: 0 8px 25px rgba(6, 182, 212, 0.6);
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(12px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        @media (max-width: 900px) {
-            .app-layout {
-                grid-template-columns: 1fr;
-                height: auto;
-            }
-            .sidebar {
-                order: 2;
-            }
+        @media (max-width: 920px) {
+            .app-layout { grid-template-columns: 1fr; height: auto; }
+            .sidebar { order: 2; }
         }
     </style>
 </head>
 <body>
 
+    <div class="bg-glow glow-1"></div>
+    <div class="bg-glow glow-2"></div>
+    <div class="bg-glow glow-3"></div>
+
     <div class="app-layout">
-        <!-- الشريط الجانبي الفخم للـ QR Code والمعلومات -->
+        <!-- الشريط الجانبي الفخم -->
         <div class="sidebar">
             <div class="sidebar-header">
                 <div class="brand-badge">AI</div>
-                <h2>معرض تعليمتي</h2>
-                <p>جناح هندسة الذكاء الاصطناعي</p>
+                <h2 id="sbTitle">معرض تعليمتي</h2>
+                <p id="sbSub">جناح هندسة الذكاء الاصطناعي</p>
+            </div>
+
+            <div class="metrics-box">
+                <div class="metric-card">
+                    <div class="val">LLaMA 3.3</div>
+                    <div class="lbl" id="m1Lbl">النموذج النشط</div>
+                </div>
+                <div class="metric-card">
+                    <div class="val">&lt; 1s</div>
+                    <div class="lbl" id="m2Lbl">سرعة الاستجابة</div>
+                </div>
             </div>
 
             <div class="qr-card">
                 <img src="/qr" alt="QR Code" class="qr-img">
-                <div class="qr-text">امسح الكود لفتح المحادثة من هاتفك 📱</div>
+                <div class="qr-text" id="qrTxt">امسح الكود لتجربة المحادثة عبر الجوال 📱</div>
             </div>
 
-            <div class="sidebar-footer">
-                مشروع تفاعلي مدعوم بالذكاء الاصطناعي 🚀
+            <div id="sbFooter" style="font-size: 0.75rem; color: var(--text-muted); border-top: 1px solid rgba(255,255,255,0.08); width: 100%; padding-top: 12px;">
+                تجربة تفاعلية حية لمستقبل التعلم ✨
             </div>
         </div>
 
         <!-- منطقة المحادثة الرئيسية -->
         <div class="chat-container">
             <div class="chat-header">
-                <h1><span class="status-dot"></span> مساعد هندسة الذكاء الاصطناعي</h1>
-            </div>
+                <div class="chat-header-title">
+                    <div class="status-dot"></div>
+                    <h1 id="headerTitle" style="font-size: 1.1rem; font-weight: 700;">المساعد الذكي للهندسة والتكنولوجيا</h1>
+                </div>
 
-            <div class="chat-area" id="chatBox">
-                <div class="message bot">
-                    مرحباً بك في معرض تعليمتي! 🌟 كيف يمكنني مساعدتك اليوم في استكشاف عالم الذكاء الاصطناعي؟
+                <!-- أزرار التحكم العليا -->
+                <div class="header-actions">
+                    <button class="action-btn" onclick="newChat()">
+                        <span>🔄</span> <span id="btnNewChat">محادثة جديدة</span>
+                    </button>
+                    <button class="action-btn" onclick="toggleLanguage()">
+                        <span>🌐</span> <span id="btnLang">English</span>
+                    </button>
                 </div>
             </div>
 
-            <div class="suggestions">
-                <div class="chip" onclick="sendPrompt('ما هو الذكاء الاصطناعي؟')">ما هو الذكاء الاصطناعي؟</div>
-                <div class="chip" onclick="sendPrompt('هل يستبدل AI الوظائف؟')">هل يستبدل الوظائف؟</div>
-                <div class="chip" onclick="sendPrompt('ما الفرق بين AI و ML؟')">الفرق بين AI و ML</div>
-                <div class="chip" onclick="sendPrompt('كيف ابدا اتعلم ذكاء اصطناعي؟')">كيف أبدأ التعلم؟</div>
+            <div class="chat-area" id="chatBox">
+                <div class="message bot" id="welcomeMsg">
+                    أهلاً بك في جناح الذكاء الاصطناعي بمعرض تعليمتي! 🚀 اسألني عن أي موضوع في التكنولوجيا، البرمجة، أو مستقبل الوظائف وستجد إجابة واضحة ومباشرة.
+                </div>
+            </div>
+
+            <div class="suggestions" id="suggestionsBox">
+                <!-- اقتراحات تفاعلية تتحول مع اللغة -->
             </div>
 
             <div class="input-area">
-                <input type="text" id="userInput" placeholder="اسأل أي شيء... (عربي أو English)" onkeypress="handleKey(event)">
-                <button class="send-btn" onclick="sendMessage()">إرسال</button>
+                <input type="text" id="userInput" placeholder="اكتب سؤالك هنا..." onkeypress="handleKey(event)">
+                <button class="send-btn" id="sendBtnText" onclick="sendMessage()">إرسال</button>
             </div>
         </div>
     </div>
 
     <script>
         let chatHistory = [];
+        let currentLang = 'ar'; // 'ar' أو 'en'
+
+        const translations = {
+            ar: {
+                sbTitle: "معرض تعليمتي",
+                sbSub: "جناح هندسة الذكاء الاصطناعي",
+                m1Lbl: "النموذج النشط",
+                m2Lbl: "سرعة الاستجابة",
+                qrTxt: "امسح الكود لتجربة المحادثة عبر الجوال 📱",
+                sbFooter: "تجربة تفاعلية حية لمستقبل التعلم ✨",
+                headerTitle: "المساعد الذكي للهندسة والتكنولوجيا",
+                btnNewChat: "محادثة جديدة",
+                btnLang: "English",
+                welcomeMsg: "أهلاً بك في جناح الذكاء الاصطناعي بمعرض تعليمتي! 🚀 اسألني عن أي موضوع في التكنولوجيا، البرمجة، أو مستقبل الوظائف وستجد إجابة واضحة ومباشرة.",
+                inputPh: "اكتب سؤالك هنا... (يفهم اللهجات والأخطاء الإملائية)",
+                sendBtn: "إرسال",
+                thinking: "جاري التفكير والأجابة...",
+                errConnection: "حدث خطأ في الاتصال بالخادم.",
+                suggestions: [
+                    { label: "ما هو الذكاء الاصطناعي؟", text: "ما هو الذكاء الاصطناعي ببساطة؟" },
+                    { label: "هل يستبدل الوظائف؟", text: "هل يستبدل الذكاء الاصطناعي الوظائف؟" },
+                    { label: "الفرق بين AI و ML", text: "ما الفرق بين AI و ML؟" },
+                    { label: "كيف أبدأ التعلم؟", text: "كيف أبدأ تعلم البرمجة والذكاء الاصطناعي؟" }
+                ]
+            },
+            en: {
+                sbTitle: "Talimati Exhibition",
+                sbSub: "AI Engineering Pavilion",
+                m1Lbl: "Active Model",
+                m2Lbl: "Response Time",
+                qrTxt: "Scan QR code to chat on mobile 📱",
+                sbFooter: "Interactive Live Experience for Future Learning ✨",
+                headerTitle: "AI & Engineering Smart Assistant",
+                btnNewChat: "New Chat",
+                btnLang: "العربية",
+                welcomeMsg: "Welcome to the AI Pavilion at Talimati Exhibition! 🚀 Ask me anything about tech, programming, or future careers for quick answers.",
+                inputPh: "Type your question here...",
+                sendBtn: "Send",
+                thinking: "Thinking and generating response...",
+                errConnection: "Connection error with server.",
+                suggestions: [
+                    { label: "What is AI?", text: "What is Artificial Intelligence in simple terms?" },
+                    { label: "Will AI replace jobs?", text: "Will AI replace human jobs?" },
+                    { label: "AI vs Machine Learning", text: "What is the difference between AI and ML?" },
+                    { label: "How to start learning?", text: "How can I start learning programming and AI?" }
+                ]
+            }
+        };
+
+        function renderUI() {
+            const t = translations[currentLang];
+            document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+            document.documentElement.lang = currentLang;
+
+            document.getElementById('sbTitle').innerText = t.sbTitle;
+            document.getElementById('sbSub').innerText = t.sbSub;
+            document.getElementById('m1Lbl').innerText = t.m1Lbl;
+            document.getElementById('m2Lbl').innerText = t.m2Lbl;
+            document.getElementById('qrTxt').innerText = t.qrTxt;
+            document.getElementById('sbFooter').innerText = t.sbFooter;
+            document.getElementById('headerTitle').innerText = t.headerTitle;
+            document.getElementById('btnNewChat').innerText = t.btnNewChat;
+            document.getElementById('btnLang').innerText = t.btnLang;
+            document.getElementById('userInput').placeholder = t.inputPh;
+            document.getElementById('sendBtnText').innerText = t.sendBtn;
+
+            // Render chips
+            const sugContainer = document.getElementById('suggestionsBox');
+            sugContainer.innerHTML = '';
+            t.suggestions.forEach(s => {
+                const chip = document.createElement('div');
+                chip.className = 'chip';
+                chip.innerText = s.label;
+                chip.onclick = () => sendPrompt(s.text);
+                sugContainer.appendChild(chip);
+            });
+        }
+
+        function newChat() {
+            chatHistory = [];
+            const chatBox = document.getElementById('chatBox');
+            const t = translations[currentLang];
+            chatBox.innerHTML = `<div class="message bot">${t.welcomeMsg}</div>`;
+        }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'ar' ? 'en' : 'ar';
+            renderUI();
+            newChat();
+        }
 
         async function sendMessage() {
             const input = document.getElementById('userInput');
@@ -350,24 +548,25 @@
             input.value = '';
 
             chatHistory.push({ role: 'user', content: text });
-            const botMsgDiv = addMessage('جاري التفكير...', 'bot');
+            const t = translations[currentLang];
+            const botMsgDiv = addMessage(t.thinking, 'bot');
 
             try {
                 const response = await fetch('/api/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ messages: chatHistory, language: 'ar' })
+                    body: JSON.stringify({ messages: chatHistory, language: currentLang })
                 });
 
                 const data = await response.json();
-                let answer = data.answer || 'عذراً، حدث خطأ.';
+                let answer = data.answer || 'Error';
                 
-                answer = answer.replace(/[#*|_]/g, ''); // تنظيف النصوص
+                answer = answer.replace(/[#*|_]/g, ''); // Clean markdown formatting
 
                 botMsgDiv.innerText = answer;
                 chatHistory.push({ role: 'assistant', content: answer });
             } catch (err) {
-                botMsgDiv.innerText = 'حدث خطأ في الاتصال بالخادم.';
+                botMsgDiv.innerText = t.errConnection;
             }
         }
 
@@ -389,6 +588,9 @@
         function handleKey(e) {
             if (e.key === 'Enter') sendMessage();
         }
+
+        // Initialize UI
+        renderUI();
     </script>
 </body>
 </html>
