@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -26,7 +26,7 @@
         body {
             background-color: var(--bg-main);
             color: var(--text-main);
-            font-family: 'Inter', 'Noto Sans Arabic', sans-serif;
+            font-family: 'Noto Sans Arabic', 'Inter', sans-serif;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -56,8 +56,8 @@
             pointer-events: none;
             z-index: 0;
         }
-        .glow-one { top: -100px; left: -100px; background: var(--accent-cyan); }
-        .glow-two { bottom: -100px; right: -100px; background: var(--accent-purple); }
+        .glow-one { top: -100px; right: -100px; background: var(--accent-cyan); }
+        .glow-two { bottom: -100px; left: -100px; background: var(--accent-purple); }
 
         main, header, footer { position: relative; z-index: 1; width: 100%; max-width: 1100px; }
 
@@ -97,6 +97,7 @@
             border-radius: 10px;
             font-weight: 600;
             transition: all 0.2s ease;
+            font-family: inherit;
         }
 
         .language-button, .new-chat-button {
@@ -131,8 +132,8 @@
         }
 
         .hero h1 {
-            font-size: 2.8rem;
-            line-height: 1.15;
+            font-size: 2.6rem;
+            line-height: 1.2;
             margin-bottom: 16px;
         }
 
@@ -241,19 +242,19 @@
             padding: 12px 18px;
             border-radius: 14px;
             max-width: 80%;
-            line-height: 1.5;
+            line-height: 1.6;
         }
 
         .user-message {
             background: var(--accent-purple);
             color: #fff;
-            align-self: flex-end;
+            align-self: flex-start;
         }
 
         .assistant-message {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--border-card);
-            align-self: flex-start;
+            align-self: flex-end;
         }
 
         .quick-prompts { display: flex; gap: 8px; flex-wrap: wrap; }
@@ -265,6 +266,10 @@
             border-radius: 20px;
             font-size: 0.85rem;
         }
+        .quick-prompts button:hover {
+            border-color: var(--accent-cyan);
+            color: var(--text-main);
+        }
 
         .composer { display: flex; gap: 12px; }
         input {
@@ -275,6 +280,7 @@
             border-radius: 12px;
             color: #fff;
             outline: none;
+            font-family: inherit;
         }
 
         .send-button {
@@ -304,6 +310,7 @@
             margin: 12px 0;
             color: var(--accent-cyan);
             font-family: monospace;
+            direction: ltr;
         }
 
         .qr-frame {
@@ -342,83 +349,83 @@
             <span class="brand-mark">AI</span>
             <span>
                 <strong>AI EXPLORER</strong><br>
-                <small id="brandSubtitle" style="color: var(--text-muted); font-size: 0.75rem;">AI ENGINEERING EXPERIENCE</small>
+                <small id="brandSubtitle" style="color: var(--text-muted); font-size: 0.75rem;">تجربة هندسة الذكاء الاصطناعي</small>
             </span>
         </a>
         <div class="top-actions">
-            <button class="language-button" id="languageButton">العربية</button>
-            <button class="new-chat-button" id="newChatButton">New Chat</button>
+            <button class="language-button" id="languageButton">English</button>
+            <button class="new-chat-button" id="newChatButton">محادثة جديدة</button>
         </div>
     </header>
 
     <main>
         <section class="hero">
             <div class="hero-copy">
-                <div class="eyebrow" id="heroEyebrow">ARTIFICIAL INTELLIGENCE</div>
-                <h1 id="heroTitle">Ask AI.<br><span>Understand AI.</span><br>Build the future.</h1>
-                <p id="heroText">Explore Artificial Intelligence through interactive questions, real examples, and intelligent responses.</p>
+                <div class="eyebrow" id="heroEyebrow">الذكاء الاصطناعي</div>
+                <h1 id="heroTitle">اسأل الذكاء.<br><span>افهم الذكاء.</span><br>وابنِ المستقبل.</h1>
+                <p id="heroText">اكتشف الذكاء الاصطناعي من خلال الأسئلة والأمثلة الواقعية والإجابات التفاعلية.</p>
                 <div class="hero-buttons">
-                    <button class="primary-button" id="askButton">Ask a question</button>
+                    <button class="primary-button" id="askButton">اسأل سؤالاً</button>
                 </div>
             </div>
 
             <div class="orb-area">
                 <div class="orb"></div>
-                <div class="orb-label" id="orbLabel">AI READY</div>
+                <div class="orb-label" id="orbLabel">الذكاء جاهز</div>
             </div>
         </section>
 
         <section class="feature-strip">
             <article class="feature-card">
                 <div class="feature-number">01</div>
-                <h3 id="featureOneTitle">Ask anything</h3>
-                <p id="featureOneText">From “What is AI?” to advanced AI Engineering questions.</p>
+                <h3 id="featureOneTitle">اسأل عن أي شيء</h3>
+                <p id="featureOneText">من سؤال: ما هو الذكاء الاصطناعي؟ إلى أسئلة متقدمة في هندسة الذكاء الاصطناعي.</p>
             </article>
             <article class="feature-card">
                 <div class="feature-number">02</div>
-                <h3 id="featureTwoTitle">Instant Answers</h3>
-                <p id="featureTwoText">Get fast, practical, and clear technical explanations.</p>
+                <h3 id="featureTwoTitle">إجابات فورية</h3>
+                <p id="featureTwoText">احصل على الشروح الفنية السريعة والعملية والواضحة.</p>
             </article>
             <article class="feature-card">
                 <div class="feature-number">03</div>
-                <h3 id="featureThreeTitle">Learn by examples</h3>
-                <p id="featureThreeText">See how AI connects to jobs, medicine, cars, business, and daily life.</p>
+                <h3 id="featureThreeTitle">تعلم بالأمثلة</h3>
+                <p id="featureThreeText">شاهد كيف يرتبط الذكاء الاصطناعي بالوظائف والطب والسيارات والأعمال والحياة اليومية.</p>
             </article>
         </section>
 
         <section class="experience">
             <div class="section-heading">
                 <div>
-                    <div class="eyebrow" id="liveExperienceLabel">LIVE EXPERIENCE</div>
-                    <h2 id="chatTitle">Your AI conversation</h2>
+                    <div class="eyebrow" id="liveExperienceLabel">تجربة مباشرة</div>
+                    <h2 id="chatTitle">محادثتك مع الذكاء الاصطناعي</h2>
                 </div>
-                <div class="mode-pill" id="modePill">TEXT MODE</div>
+                <div class="mode-pill" id="modePill">الوضع النصي</div>
             </div>
 
             <div class="chat-shell">
                 <div class="chat-header">
                     <div>
                         <strong>AI Explorer</strong><br>
-                        <small id="assistantSubtitle" style="color: var(--text-muted);">AI Engineering Assistant</small>
+                        <small id="assistantSubtitle" style="color: var(--text-muted);">مساعد هندسة الذكاء الاصطناعي</small>
                     </div>
                 </div>
 
                 <div class="messages" id="messages">
                     <div class="message assistant-message" id="welcomeMsg">
-                        What would you like to discover? Type a question or select a prompt below.
+                        ماذا تريد أن تكتشف؟ اسأل سؤالاً أو اختبر أحد المقترحات أدناه.
                     </div>
                 </div>
 
-                <div class="quick-prompts">
-                    <button data-question="What is Artificial Intelligence? Explain it simply.">What is AI?</button>
-                    <button data-question="Can Artificial Intelligence take people's jobs?">Can AI take jobs?</button>
-                    <button data-question="What is the difference between AI, Machine Learning, and Deep Learning?">AI vs ML vs DL</button>
-                    <button data-question="What can I build as a beginner AI Engineering student?">What can I build?</button>
+                <div class="quick-prompts" id="quickPrompts">
+                    <button data-q="ar1">ما هو الذكاء الاصطناعي؟</button>
+                    <button data-q="ar2">هل يستبدل الذكاء الوظائف؟</button>
+                    <button data-q="ar3">ما الفرق بين AI و ML و DL؟</button>
+                    <button data-q="ar4">ماذا يمكنني أن أبني كمبتدئ؟</button>
                 </div>
 
                 <form class="composer" id="composer">
-                    <input id="messageInput" autocomplete="off" placeholder="Ask anything about AI..." maxlength="4000">
-                    <button type="submit" class="send-button" id="sendButton">Send</button>
+                    <input id="messageInput" autocomplete="off" placeholder="اسأل أي شيء عن الذكاء الاصطناعي..." maxlength="4000">
+                    <button type="submit" class="send-button" id="sendButton">إرسال</button>
                 </form>
             </div>
         </section>
@@ -426,9 +433,9 @@
         <section class="qr-section">
             <div class="qr-card">
                 <div>
-                    <div class="eyebrow" id="takeAILabel">TAKE AI WITH YOU</div>
-                    <h2 id="qrTitle">Scan. Open. Talk.</h2>
-                    <p id="qrText">Visitors can scan this QR code with any phone to try AI Explorer on their phones.</p>
+                    <div class="eyebrow" id="takeAILabel">خذ الذكاء معك</div>
+                    <h2 id="qrTitle">امسح. افتح. جرب.</h2>
+                    <p id="qrText">يمكن للزوار مسح رمز QR من أي هاتف وفتح التجربة مباشرة.</p>
                     <div class="url-box">{{ public_url }}</div>
                 </div>
                 <div class="qr-frame">
@@ -440,7 +447,7 @@
 
     <footer>
         <span>AI EXPLORER</span>
-        <span id="footerLabel">AI Engineering Exhibition Experience</span>
+        <span id="footerLabel">تجربة معرض هندسة الذكاء الاصطناعي</span>
     </footer>
 
     <script>
@@ -451,11 +458,46 @@
             const languageButton = document.getElementById("languageButton");
             const newChatButton = document.getElementById("newChatButton");
             const askButton = document.getElementById("askButton");
+            const quickPromptsContainer = document.getElementById("quickPrompts");
 
-            let currentLang = "en";
+            let currentLang = "ar";
             let chatHistory = [];
 
             const translations = {
+                ar: {
+                    brandSubtitle: "تجربة هندسة الذكاء الاصطناعي",
+                    heroEyebrow: "الذكاء الاصطناعي",
+                    heroTitle: 'اسأل الذكاء.<br><span>افهم الذكاء.</span><br>وابنِ المستقبل.',
+                    heroText: "اكتشف الذكاء الاصطناعي من خلال الأسئلة والأمثلة الواقعية والإجابات التفاعلية.",
+                    askButton: "اسأل سؤالاً",
+                    orbLabel: "الذكاء جاهز",
+                    featureOneTitle: "اسأل عن أي شيء",
+                    featureOneText: "من سؤال: ما هو الذكاء الاصطناعي؟ إلى أسئلة متقدمة في هندسة الذكاء الاصطناعي.",
+                    featureTwoTitle: "إجابات فورية",
+                    featureTwoText: "احصل على الشروح الفنية السريعة والعملية والواضحة.",
+                    featureThreeTitle: "تعلم بالأمثلة",
+                    featureThreeText: "شاهد كيف يرتبط الذكاء الاصطناعي بالوظائف والطب والسيارات والأعمال والحياة اليومية.",
+                    liveExperienceLabel: "تجربة مباشرة",
+                    chatTitle: "محادثتك مع الذكاء الاصطناعي",
+                    modePill: "الوضع النصي",
+                    assistantSubtitle: "مساعد هندسة الذكاء الاصطناعي",
+                    welcomeMsg: "ماذا تريد أن تكتشف؟ اسأل سؤالاً أو اختبر أحد المقترحات أدناه.",
+                    inputPlaceholder: "اسأل أي شيء عن الذكاء الاصطناعي...",
+                    sendButton: "إرسال",
+                    takeAILabel: "خذ الذكاء معك",
+                    qrTitle: "امسح. افتح. جرب.",
+                    qrText: "يمكن للزوار مسح رمز QR من أي هاتف وفتح التجربة مباشرة.",
+                    footerLabel: "تجربة معرض هندسة الذكاء الاصطناعي",
+                    newChatText: "محادثة جديدة",
+                    langButtonText: "English",
+                    prompts: [
+                        { text: "ما هو الذكاء الاصطناعي؟", query: "ما هو الذكاء الاصطناعي؟ اشرحه ببساطة." },
+                        { text: "هل يستبدل الذكاء الوظائف؟", query: "هل يمكن للذكاء الاصطناعي أن يستبدل وظائف البشر؟" },
+                        { text: "ما الفرق بين AI و ML و DL؟", query: "ما الفرق بين الذكاء الاصطناعي، تعلم الآلة، والتعلم العميق؟" },
+                        { text: "ماذا يمكنني أن أبني كمبتدئ؟", query: "ما هي المشاريع التي يمكنني بناؤها كمبتدئ في هندسة الذكاء الاصطناعي؟" }
+                    ],
+                    userFriendlyError: "عذراً، حدث انقطاع مؤقت في الاتصال بالخادم. يرجى المحاولة بعد لحظات."
+                },
                 en: {
                     brandSubtitle: "AI ENGINEERING EXPERIENCE",
                     heroEyebrow: "ARTIFICIAL INTELLIGENCE",
@@ -480,35 +522,27 @@
                     qrTitle: "Scan. Open. Talk.",
                     qrText: "Visitors can scan this QR code with any phone to try AI Explorer on their phones.",
                     footerLabel: "AI Engineering Exhibition Experience",
-                    langButtonText: "العربية"
-                },
-                ar: {
-                    brandSubtitle: "تجربة هندسة الذكاء الاصطناعي",
-                    heroEyebrow: "الذكاء الاصطناعي",
-                    heroTitle: 'اسأل الذكاء.<br><span>افهم الذكاء.</span><br>وابنِ المستقبل.',
-                    heroText: "اكتشف الذكاء الاصطناعي من خلال الأسئلة والأمثلة الواقعية والإجابات التفاعلية.",
-                    askButton: "اسأل سؤالاً",
-                    orbLabel: "الذكاء جاهز",
-                    featureOneTitle: "اسأل عن أي شيء",
-                    featureOneText: "من سؤال: ما هو الذكاء الاصطناعي؟ إلى أسئلة متتقدمة في هندسة الذكاء الاصطناعي.",
-                    featureTwoTitle: "إجابات فورية",
-                    featureTwoText: "احصل على الشروح الفنية السريعة والعملية والواضحة.",
-                    featureThreeTitle: "تعلم بالأمثلة",
-                    featureThreeText: "شاهد كيف يرتبط الذكاء الاصطناعي بالوظائف والطب والسيارات والأعمال والحياة اليومية.",
-                    liveExperienceLabel: "تجربة مباشرة",
-                    chatTitle: "محادثتك مع الذكاء الاصطناعي",
-                    modePill: "الوضع النصي",
-                    assistantSubtitle: "مساعد هندسة الذكاء الاصطناعي",
-                    welcomeMsg: "ماذا تريد أن تكتشف؟ اسأل سؤالاً أو اختبر أحد المقترحات أدناه.",
-                    inputPlaceholder: "اسأل أي شيء عن الذكاء الاصطناعي...",
-                    sendButton: "إرسال",
-                    takeAILabel: "خذ الذكاء معك",
-                    qrTitle: "امسح. افتح. جرب.",
-                    qrText: "يمكن للزوار مسح رمز QR من أي هاتف وفتح التجربة مباشرة.",
-                    footerLabel: "تجربة معرض هندسة الذكاء الاصطناعي",
-                    langButtonText: "English"
+                    newChatText: "New Chat",
+                    langButtonText: "العربية",
+                    prompts: [
+                        { text: "What is AI?", query: "What is Artificial Intelligence? Explain it simply." },
+                        { text: "Can AI take jobs?", query: "Can Artificial Intelligence take people's jobs?" },
+                        { text: "AI vs ML vs DL", query: "What is the difference between AI, Machine Learning, and Deep Learning?" },
+                        { text: "What can I build?", query: "What can I build as a beginner AI Engineering student?" }
+                    ],
+                    userFriendlyError: "Sorry, a temporary network connection occurred. Please try again in a moment."
                 }
             };
+
+            function renderQuickPrompts(lang) {
+                quickPromptsContainer.innerHTML = "";
+                translations[lang].prompts.forEach(p => {
+                    const btn = document.createElement("button");
+                    btn.textContent = p.text;
+                    btn.addEventListener("click", () => sendMessage(p.query));
+                    quickPromptsContainer.appendChild(btn);
+                });
+            }
 
             function updateLanguage(lang) {
                 currentLang = lang;
@@ -524,7 +558,10 @@
                     }
                 }
                 if (languageButton) languageButton.textContent = t.langButtonText;
+                if (newChatButton) newChatButton.textContent = t.newChatText;
                 if (messageInput) messageInput.placeholder = t.inputPlaceholder;
+
+                renderQuickPrompts(lang);
             }
 
             if (languageButton) {
@@ -546,13 +583,6 @@
                     messages.innerHTML = `<div class="message assistant-message">${translations[currentLang].welcomeMsg}</div>`;
                 });
             }
-
-            document.querySelectorAll(".quick-prompts button").forEach(btn => {
-                btn.addEventListener("click", () => {
-                    const q = btn.getAttribute("data-question");
-                    if (q) sendMessage(q);
-                });
-            });
 
             if (composer) {
                 composer.addEventListener("submit", (e) => {
@@ -580,15 +610,15 @@
                     const data = await res.json();
                     const loadingEl = document.getElementById(loadingId);
 
-                    if (data.answer) {
+                    if (res.ok && data.answer) {
                         if (loadingEl) loadingEl.textContent = data.answer;
                         chatHistory.push({ role: "assistant", content: data.answer });
                     } else {
-                        if (loadingEl) loadingEl.textContent = "Error: " + (data.error || "Failed to respond");
+                        if (loadingEl) loadingEl.textContent = translations[currentLang].userFriendlyError;
                     }
                 } catch (err) {
                     const loadingEl = document.getElementById(loadingId);
-                    if (loadingEl) loadingEl.textContent = "Connection error. Please try again.";
+                    if (loadingEl) loadingEl.textContent = translations[currentLang].userFriendlyError;
                 }
             }
 
@@ -602,6 +632,9 @@
                 messages.scrollTop = messages.scrollHeight;
                 return id;
             }
+
+            // Initial setup
+            renderQuickPrompts("ar");
         });
     </script>
 </body>
