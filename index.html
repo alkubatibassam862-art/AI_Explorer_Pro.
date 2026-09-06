@@ -5,14 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#070b16">
     <meta name="application-name" content="AI Explorer">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>AI Explorer | AI Engineering</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Arabic:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- استدعاء ملف التنسيق بمسار مطلق ثابت -->
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
@@ -30,7 +26,6 @@
         </a>
         <div class="top-actions">
             <button class="language-button" id="languageButton">العربية</button>
-            <button class="install-button" id="installAppButton" hidden>Install App</button>
             <button class="new-chat-button" id="newChatButton">New Chat</button>
         </div>
     </header>
@@ -40,10 +35,9 @@
             <div class="hero-copy">
                 <div class="eyebrow" id="heroEyebrow">ARTIFICIAL INTELLIGENCE</div>
                 <h1 id="heroTitle">Ask AI.<br><span>Understand AI.</span><br>Build the future.</h1>
-                <p id="heroText">Explore Artificial Intelligence through conversation, voice, real examples, and interactive answers.</p>
+                <p id="heroText">Explore Artificial Intelligence through interactive questions, real examples, and intelligent responses.</p>
                 <div class="hero-buttons">
-                    <button class="primary-button" id="talkButton">Talk to AI</button>
-                    <button class="secondary-button" id="askButton">Ask a question</button>
+                    <button class="primary-button" id="askButton">Ask a question</button>
                 </div>
                 <div class="live-status">
                     <span class="status-dot"></span>
@@ -72,8 +66,8 @@
             </article>
             <article class="feature-card">
                 <div class="feature-number">02</div>
-                <h3 id="featureTwoTitle">Speak naturally</h3>
-                <p id="featureTwoText">Use your microphone and have a real-time voice conversation.</p>
+                <h3 id="featureTwoTitle">Instant Answers</h3>
+                <p id="featureTwoText">Get fast, practical, and clear technical explanations.</p>
             </article>
             <article class="feature-card">
                 <div class="feature-number">03</div>
@@ -111,7 +105,7 @@
                         <div class="welcome-icon">AI</div>
                         <div>
                             <h3 id="welcomeTitle">What would you like to discover?</h3>
-                            <p id="welcomeText">Ask a question, type a message, or start a voice conversation.</p>
+                            <p id="welcomeText">Type a question or select a prompt below to get started.</p>
                         </div>
                     </div>
                 </div>
@@ -125,34 +119,9 @@
                 </div>
 
                 <form class="composer" id="composer">
-                    <button type="button" class="icon-button mic-button" id="voiceMessageButton">MIC</button>
                     <input id="messageInput" autocomplete="off" placeholder="Ask anything about AI..." maxlength="4000">
                     <button type="submit" class="send-button" id="sendButton">Send</button>
                 </form>
-            </div>
-        </section>
-
-        <section class="voice-section">
-            <div class="voice-panel">
-                <div class="voice-copy">
-                    <div class="eyebrow" id="realTimeVoiceLabel">REAL-TIME VOICE</div>
-                    <h2 id="voiceTitle">Talk to AI like a conversation.</h2>
-                    <p id="voiceText">Press the microphone, speak naturally, pause when you finish, and AI Explorer will answer with a live voice response.</p>
-                    <div class="voice-controls">
-                        <button class="voice-main-button" id="voiceMainButton">
-                            <span class="mic-symbol" id="micSymbol">MIC</span>
-                            <span id="voiceButtonText">Start voice</span>
-                        </button>
-                        <button class="voice-stop-button" id="voiceStopButton">End conversation</button>
-                    </div>
-                    <div class="voice-hint" id="voiceHint">Microphone permission is required the first time.</div>
-                </div>
-                <div class="voice-visual">
-                    <div class="voice-orb" id="voiceOrb">
-                        <div class="voice-orb-core"></div>
-                    </div>
-                    <div class="voice-state" id="voiceState">VOICE OFF</div>
-                </div>
             </div>
         </section>
 
@@ -163,7 +132,7 @@
                     <h2 id="qrTitle">Scan. Open. Talk.</h2>
                     <p id="qrText">Visitors can scan this QR code with any phone and open the AI Explorer experience.</p>
                     <div class="url-box">{{ public_url }}</div>
-                    <p class="qr-note" id="qrNote">For the exhibition, use a public HTTPS URL so visitors do not need to be on the same Wi-Fi network.</p>
+                    <p class="qr-note" id="qrNote">For the exhibition, visitors can scan to try the app on their phones.</p>
                 </div>
                 <div class="qr-frame">
                     <img src="/qr" alt="AI Explorer QR code">
@@ -177,16 +146,12 @@
         <span id="footerLabel">AI Engineering Exhibition Experience</span>
     </footer>
 
-    <audio id="remoteAudio" autoplay></audio>
-
     <script>
         window.AI_EXPLORER_CONFIG = {
             publicUrl: {{ public_url|tojson }},
-            textModel: {{ text_model|tojson }},
-            realtimeModel: {{ realtime_model|tojson }}
+            textModel: {{ text_model|tojson }}
         };
     </script>
-    <!-- استدعاء ملف السكربت بمسار مطلق ثابت -->
     <script src="/static/app.js"></script>
 </body>
 </html>
