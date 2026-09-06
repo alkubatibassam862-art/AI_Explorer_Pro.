@@ -36,12 +36,21 @@ def chat():
     messages = data.get('messages', [])
     lang = data.get('language', 'ar')
 
+    # تعليمات صارمة لاختصار الردود وتجاهل الأخطاء الإملائية
     system_prompt = (
-        "أنت مساعد ذكي ومختص في هندسة الذكاء الاصطناعي لمعرض تعليمتي. "
-        "أجب باختصار ووضوح وبأسلوب احترافي مشجع."
+        "أنت مساعد ذكي ومختص في هندسة الذكاء الاصطناعي في معرض تعليمتي. "
+        "قواعد الإجابة الصارمة:\n"
+        "1. أجب باختصار شديد جداً (فقرة واحدة فقط أو نقاط بسيطة).\n"
+        "2. لا تستخدم الجداول، الرموز المعقدة، التنسيقات العريضة الشديدة، أو الشفرات التي تشوه النص.\n"
+        "3. افهم السؤال حتى لو احتوى على أخطاء إملائية أو لغوية أو كان بلهجة عامية (عربي أو إنجليزي).\n"
+        "4. اجعل الأسلوب ممتعاً، فخماً، ومفهوماً للجميع."
     ) if lang == 'ar' else (
         "You are an AI Engineering Assistant for an educational exhibition. "
-        "Answer concisely, clearly, and professionally."
+        "Strict rules:\n"
+        "1. Answer VERY concisely (1 short paragraph or simple bullet points).\n"
+        "2. Do NOT use tables, markdown borders, or complex formatting symbols.\n"
+        "3. Ignore any spelling or grammatical errors in the user query (Arabic/English).\n"
+        "4. Be friendly, elegant, and clear."
     )
 
     formatted_messages = [{"role": "system", "content": system_prompt}]
@@ -53,11 +62,10 @@ def chat():
 
     client = Groq(api_key=api_key.strip())
 
-    # قائمة بالنماذج المتاحة بترتيب الأفضلية
     models_to_try = [
-        "openai/gpt-oss-20b",
         "llama-3.3-70b-versatile",
-        "llama-3.1-8b-instant"
+        "llama-3.1-8b-instant",
+        "openai/gpt-oss-20b"
     ]
 
     last_error = None
@@ -66,8 +74,8 @@ def chat():
             response = client.chat.completions.create(
                 model=model_name,
                 messages=formatted_messages,
-                temperature=0.7,
-                max_tokens=800
+                temperature=0.6,
+                max_tokens=400
             )
             answer = response.choices[0].message.content
             return jsonify({"answer": answer})
@@ -76,7 +84,7 @@ def chat():
             print(f"Failed with model {model_name}: {last_error}")
             continue
 
-    return jsonify({"answer": f"عذراً، حدث خطأ في نموذج الذكاء الاصطناعي: {last_error}"}), 500
+    return jsonify({"answer": f"حدث خطأ في الاتصال: {last_error}"}), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
