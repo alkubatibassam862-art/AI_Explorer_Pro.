@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Engineering Assistant | مساعد هندسة الذكاء الاصطناعي</title>
+    <title>AI Explorer | معرض تعليمتي</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&family=Readex+Pro:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-dark: #080c14;
-            --card-bg: rgba(18, 26, 43, 0.65);
-            --border-color: rgba(99, 102, 241, 0.25);
+            --bg-dark: #070a12;
+            --card-bg: rgba(15, 23, 42, 0.75);
+            --glass-border: rgba(99, 102, 241, 0.25);
             --primary-glow: #6366f1;
             --accent-cyan: #06b6d4;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --user-msg: linear-gradient(135deg, #4f46e5, #7c3aed);
-            --bot-msg: rgba(30, 41, 59, 0.8);
+            --bot-msg: rgba(30, 41, 59, 0.85);
         }
 
         * {
@@ -30,71 +30,144 @@
             color: var(--text-main);
             min-height: 100vh;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
             background-image: 
-                radial-gradient(circle at 15% 15%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
-                radial-gradient(circle at 85% 85%, rgba(6, 182, 212, 0.12) 0%, transparent 40%);
+                radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.18) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.15) 0%, transparent 40%);
             padding: 20px;
-            overflow-x: hidden;
         }
 
-        .main-container {
+        /* Container Grid Layout */
+        .app-layout {
             width: 100%;
-            max-width: 900px;
+            max-width: 1200px;
             height: 90vh;
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 20px;
+        }
+
+        /* Sidebar Glass Card (QR & Info) */
+        .sidebar {
             background: var(--card-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--border-color);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border);
             border-radius: 24px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            padding: 25px;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .header {
-            padding: 20px 30px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
+            align-items: center;
             justify-content: space-between;
-            align-items: center;
-            background: rgba(10, 15, 26, 0.4);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            text-align: center;
         }
 
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
+        .sidebar-header {
+            width: 100%;
         }
 
-        .brand-logo {
-            width: 42px;
-            height: 42px;
+        .brand-badge {
+            width: 50px;
+            height: 50px;
             background: linear-gradient(135deg, var(--primary-glow), var(--accent-cyan));
-            border-radius: 12px;
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 0 15px rgba(99, 102, 241, 0.5);
+            font-size: 24px;
             font-weight: bold;
-            font-size: 20px;
+            margin: 0 auto 15px auto;
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
         }
 
-        .brand-text h1 {
-            font-size: 1.1rem;
+        .sidebar-header h2 {
+            font-size: 1.2rem;
             font-weight: 700;
             background: linear-gradient(90deg, #ffffff, #a5b4fc);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
         }
 
-        .brand-text p {
+        .sidebar-header p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* QR Code Container */
+        .qr-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 20px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .qr-img {
+            width: 170px;
+            height: 170px;
+            border-radius: 12px;
+            background: #fff;
+            padding: 8px;
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
+        }
+
+        .qr-text {
+            font-size: 0.8rem;
+            color: #a5b4fc;
+            font-weight: 600;
+        }
+
+        .sidebar-footer {
             font-size: 0.75rem;
             color: var(--text-muted);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            width: 100%;
+            padding-top: 15px;
+        }
+
+        /* Chat Main Area */
+        .chat-container {
+            background: var(--card-bg);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .chat-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(10, 15, 26, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .chat-header h1 {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .status-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: #10b981;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #10b981;
+            margin-left: 8px;
         }
 
         .chat-area {
@@ -103,7 +176,7 @@
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 18px;
+            gap: 16px;
             scroll-behavior: smooth;
         }
 
@@ -111,7 +184,7 @@
             max-width: 80%;
             padding: 14px 20px;
             border-radius: 18px;
-            font-size: 0.95rem;
+            font-size: 0.92rem;
             line-height: 1.6;
             animation: fadeIn 0.3s ease-in-out;
             word-wrap: break-word;
@@ -131,14 +204,13 @@
             color: var(--text-main);
             border: 1px solid rgba(255, 255, 255, 0.08);
             border-bottom-left-radius: 4px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
         .suggestions {
             display: flex;
-            gap: 8px;
+            gap: 10px;
             overflow-x: auto;
-            padding: 10px 25px;
+            padding: 12px 25px;
             background: rgba(8, 12, 20, 0.3);
             border-top: 1px solid rgba(255, 255, 255, 0.05);
         }
@@ -159,7 +231,7 @@
             background: var(--primary-glow);
             color: #fff;
             border-color: var(--primary-glow);
-            box-shadow: 0 0 10px rgba(99, 102, 241, 0.4);
+            box-shadow: 0 0 12px rgba(99, 102, 241, 0.4);
         }
 
         .input-area {
@@ -167,13 +239,12 @@
             background: rgba(10, 15, 26, 0.6);
             display: flex;
             gap: 12px;
-            align-items: center;
         }
 
         .input-area input {
             flex: 1;
             background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--glass-border);
             padding: 14px 20px;
             border-radius: 14px;
             color: #fff;
@@ -185,7 +256,6 @@
         .input-area input:focus {
             border-color: var(--accent-cyan);
             box-shadow: 0 0 15px rgba(6, 182, 212, 0.3);
-            background: rgba(255, 255, 255, 0.08);
         }
 
         .send-btn {
@@ -206,49 +276,65 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
+        @media (max-width: 900px) {
+            .app-layout {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+            .sidebar {
+                order: 2;
+            }
         }
     </style>
 </head>
 <body>
 
-    <div class="main-container">
-        <div class="header">
-            <div class="brand">
-                <div class="brand-logo">AI</div>
-                <div class="brand-text">
-                    <h1>مساعد هندسة الذكاء الاصطناعي</h1>
-                    <p>معرض تعليمتي التفاعلي</p>
+    <div class="app-layout">
+        <!-- الشريط الجانبي الفخم للـ QR Code والمعلومات -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="brand-badge">AI</div>
+                <h2>معرض تعليمتي</h2>
+                <p>جناح هندسة الذكاء الاصطناعي</p>
+            </div>
+
+            <div class="qr-card">
+                <img src="/qr" alt="QR Code" class="qr-img">
+                <div class="qr-text">امسح الكود لفتح المحادثة من هاتفك 📱</div>
+            </div>
+
+            <div class="sidebar-footer">
+                مشروع تفاعلي مدعوم بالذكاء الاصطناعي 🚀
+            </div>
+        </div>
+
+        <!-- منطقة المحادثة الرئيسية -->
+        <div class="chat-container">
+            <div class="chat-header">
+                <h1><span class="status-dot"></span> مساعد هندسة الذكاء الاصطناعي</h1>
+            </div>
+
+            <div class="chat-area" id="chatBox">
+                <div class="message bot">
+                    مرحباً بك في معرض تعليمتي! 🌟 كيف يمكنني مساعدتك اليوم في استكشاف عالم الذكاء الاصطناعي؟
                 </div>
             </div>
-        </div>
 
-        <div class="chat-area" id="chatBox">
-            <div class="message bot">
-                مرحباً بك! أنا مساعدك الذكي في معرض تعليمتي. اسألني عن الذكاء الاصطناعي، تعلم الآلة، أو كيف تبدأ في هذا المجال! ✨
+            <div class="suggestions">
+                <div class="chip" onclick="sendPrompt('ما هو الذكاء الاصطناعي؟')">ما هو الذكاء الاصطناعي؟</div>
+                <div class="chip" onclick="sendPrompt('هل يستبدل AI الوظائف؟')">هل يستبدل الوظائف؟</div>
+                <div class="chip" onclick="sendPrompt('ما الفرق بين AI و ML؟')">الفرق بين AI و ML</div>
+                <div class="chip" onclick="sendPrompt('كيف ابدا اتعلم ذكاء اصطناعي؟')">كيف أبدأ التعلم؟</div>
             </div>
-        </div>
 
-        <div class="suggestions">
-            <div class="chip" onclick="sendPrompt('ما هو الذكاء الاصطناعي ببساطة؟')">ما هو الذكاء الاصطناعي؟</div>
-            <div class="chip" onclick="sendPrompt('هل يستبدل AI الوظائف؟')">هل يستبدل الوظائف؟</div>
-            <div class="chip" onclick="sendPrompt('ما الفرق بين AI و ML و DL؟')">الفرق بين AI و ML</div>
-            <div class="chip" onclick="sendPrompt('كيف ابدأ اتعلم ذكاء اصطناعي؟')">كيف أبدأ التعلم؟</div>
-        </div>
-
-        <div class="input-area">
-            <input type="text" id="userInput" placeholder="اسأل أي شيء... (حتى لو مع أخطاء إملائية)" onkeypress="handleKey(event)">
-            <button class="send-btn" onclick="sendMessage()">إرسال</button>
+            <div class="input-area">
+                <input type="text" id="userInput" placeholder="اسأل أي شيء... (عربي أو English)" onkeypress="handleKey(event)">
+                <button class="send-btn" onclick="sendMessage()">إرسال</button>
+            </div>
         </div>
     </div>
 
@@ -264,7 +350,6 @@
             input.value = '';
 
             chatHistory.push({ role: 'user', content: text });
-
             const botMsgDiv = addMessage('جاري التفكير...', 'bot');
 
             try {
@@ -277,8 +362,7 @@
                 const data = await response.json();
                 let answer = data.answer || 'عذراً، حدث خطأ.';
                 
-                // تنظيف النص من أي رموز Markdown تشوه الشكل
-                answer = answer.replace(/[#*|_]/g, '');
+                answer = answer.replace(/[#*|_]/g, ''); // تنظيف النصوص
 
                 botMsgDiv.innerText = answer;
                 chatHistory.push({ role: 'assistant', content: answer });
