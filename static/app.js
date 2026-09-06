@@ -477,7 +477,9 @@ document.querySelectorAll(".quick-prompts button").forEach((button) => {
     button.addEventListener("click", () => sendText(button.dataset.question));
 });
 
-setLanguage(state.language);
+document.addEventListener("DOMContentLoaded", () => {
+    setLanguage(state.language);
+});
 
 
 let deferredInstallPrompt = null;
