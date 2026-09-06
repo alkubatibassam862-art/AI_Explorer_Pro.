@@ -8,13 +8,12 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="manifest" href="manifest.webmanifest">
-    <link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/icon-192.png') }}">
     <title>AI Explorer | AI Engineering</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Arabic:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <!-- استدعاء ملف التنسيق بمسار مطلق ثابت -->
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
     <div class="background-grid"></div>
@@ -187,6 +186,7 @@
             realtimeModel: {{ realtime_model|tojson }}
         };
     </script>
+    <!-- استدعاء ملف السكربت بمسار مطلق ثابت -->
     <script src="/static/app.js"></script>
 </body>
 </html>
