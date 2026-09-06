@@ -1,17 +1,16 @@
 import os
 import io
-from flask import Flask, render_template_string, request, jsonify, send_file
+from flask import Flask, render_template, request, jsonify, send_file
 from groq import Groq
 
-app = Flask(__name__)
+# تحديد مجلد Root كمصدر للـ templates لتفادي خطأ المجلدات
+app = Flask(__name__, template_folder='.', static_folder='.')
 
 @app.route('/')
 def home():
     try:
         public_url = request.host_url.rstrip('/')
-        with open('index.html', 'r', encoding='utf-8') as f:
-            html_content = f.read()
-        return render_template_string(html_content, public_url=public_url)
+        return render_template('index.html', public_url=public_url)
     except Exception as e:
         return f"Error loading index.html: {str(e)}", 500
 
