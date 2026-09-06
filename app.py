@@ -6,16 +6,8 @@ from groq import Groq
 
 app = Flask(__name__)
 
-# جلب مفتاح Groq من المتغيرات
-GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
-
-client = None
-if GROQ_API_KEY:
-    client = Groq(api_key=GROQ_API_KEY)
-
 @app.route('/')
 def home():
-    # جلب رابط الموقع تلقائياً لإظهاره في الصفحة والـ QR
     public_url = request.host_url.rstrip('/')
     return render_template('index.html', public_url=public_url)
 
@@ -30,8 +22,9 @@ def qr_code():
 
 @app.route('/api/chat', methods=['POST'])
 def chat():
-    if not client:
-        return jsonify({"answer": "عذراً، الخدمة غير متاحة حالياً. يرجى المحاولة لاحقاً."}), 500
+    api_key = os.environ.get("GROQ_API_KEY")
+    if not api_key:
+        return jsonify({"answer": "عذراً، مفتاح API غير معرف في إعدادات البيئة."}), 500
 
     data = request.json or {}
     messages = data.get('messages', [])
@@ -53,8 +46,9 @@ def chat():
         })
 
     try:
+        client = Groq(api_key=api_key)
         response = client.chat.completions.create(
-            model="llama-3.1-8b-instant",  # نموذج سريع ودقيق جداً من Groq
+            model="llama-3.1-8b-instant",
             messages=formatted_messages,
             temperature=0.7,
             max_tokens=800
@@ -62,8 +56,8 @@ def chat():
         answer = response.choices[0].message.content
         return jsonify({"answer": answer})
     except Exception as e:
-        print(f"Error calling Groq API: {e}")
-        return jsonify({"answer": "عذراً، حدث انقطاع مؤقت في الاتصال بالخادم. يرجى المحاولة بعد لحظات."}), 500
+        print(f"Groq API Error: {str(e)}")
+        return jsonify({"answer": f"حدث خطأ أثناء الاتصال بالذكاء الاصطناعي: {str(e)}"}), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
