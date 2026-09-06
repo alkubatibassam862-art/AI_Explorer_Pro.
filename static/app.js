@@ -10,7 +10,20 @@ const state = {
     }
 };
 
-const el = (id) => document.getElementById(id) || new Proxy({}, { get: () => () => {} });
+// دالة آمنة تتفادى الأخطاء في حال عدم وجود أي عنصر في DOM
+const el = (id) => {
+    const element = document.getElementById(id);
+    if (element) return element;
+    return new Proxy({}, {
+        get: (target, prop) => {
+            if (prop === 'classList') {
+                return { toggle: () => {}, add: () => {}, remove: () => {} };
+            }
+            return () => {};
+        }
+    });
+};
+
 const translations = {
     en: {
         languageButton: "العربية",
@@ -163,7 +176,7 @@ function setLanguage(language) {
     el("connectionText").textContent = t("online");
     el("welcomeTitle").textContent = t("welcomeTitle");
     el("welcomeText").textContent = t("welcomeText");
-    el("messageInput").placeholder = t("inputPlaceholder");
+    if (el("messageInput")) el("messageInput").placeholder = t("inputPlaceholder");
     el("sendButton").textContent = t("send");
     el("voiceTitle").textContent = t("voiceTitle");
     el("voiceText").textContent = t("voiceText");
@@ -199,8 +212,11 @@ function addMessage(role, content) {
 
     wrapper.appendChild(bubble);
     wrapper.appendChild(meta);
-    el("messages").appendChild(wrapper);
-    el("messages").scrollTop = el("messages").scrollHeight;
+    const msgs = document.getElementById("messages");
+    if (msgs) {
+        msgs.appendChild(wrapper);
+        msgs.scrollTop = msgs.scrollHeight;
+    }
 }
 
 function addTyping() {
@@ -213,12 +229,15 @@ function addTyping() {
     bubble.innerHTML = "<span></span><span></span><span></span>";
 
     wrapper.appendChild(bubble);
-    el("messages").appendChild(wrapper);
-    el("messages").scrollTop = el("messages").scrollHeight;
+    const msgs = document.getElementById("messages");
+    if (msgs) {
+        msgs.appendChild(wrapper);
+        msgs.scrollTop = msgs.scrollHeight;
+    }
 }
 
 function removeTyping() {
-    const item = el("typingMessage");
+    const item = document.getElementById("typingMessage");
     if (item) item.remove();
 }
 
@@ -227,11 +246,11 @@ async function sendText(text) {
     if (!clean || state.waiting) return;
 
     state.waiting = true;
-    el("messageInput").value = "";
-    el("sendButton").disabled = true;
+    if (document.getElementById("messageInput")) document.getElementById("messageInput").value = "";
+    if (document.getElementById("sendButton")) document.getElementById("sendButton").disabled = true;
     el("statusText").textContent = t("thinking");
 
-    const welcome = el("welcomeCard");
+    const welcome = document.getElementById("welcomeCard");
     if (welcome) welcome.remove();
 
     state.messages.push({ role: "user", content: clean });
@@ -260,7 +279,7 @@ async function sendText(text) {
         addMessage("assistant", error.message || t("connectionError"));
     } finally {
         state.waiting = false;
-        el("sendButton").disabled = false;
+        if (document.getElementById("sendButton")) document.getElementById("sendButton").disabled = false;
         el("statusText").textContent = t("ready");
     }
 }
@@ -290,10 +309,10 @@ async function startVoice() {
 
         pc = new RTCPeerConnection();
         const dc = pc.createDataChannel("oai-events");
-        const remoteAudio = el("remoteAudio");
+        const remoteAudio = document.getElementById("remoteAudio");
 
         pc.ontrack = (event) => {
-            if (event.streams && event.streams[0]) {
+            if (event.streams && event.streams[0] && remoteAudio) {
                 remoteAudio.srcObject = event.streams[0];
                 remoteAudio.play().catch(() => {});
             }
@@ -355,6 +374,7 @@ async function startVoice() {
         el("statusText").textContent = t("voiceError");
     }
 }
+
 function handleRealtimeEvent(event) {
     if (event.type === "input_audio_buffer.speech_started") {
         setVoiceVisual(true, t("listening"));
@@ -371,7 +391,7 @@ function handleRealtimeEvent(event) {
     if (event.type === "response.audio_transcript.done") {
         const transcript = event.transcript || "";
         if (transcript.trim()) {
-            const welcome = el("welcomeCard");
+            const welcome = document.getElementById("welcomeCard");
             if (welcome) welcome.remove();
             addMessage("assistant", transcript.trim());
         }
@@ -380,7 +400,7 @@ function handleRealtimeEvent(event) {
     if (event.type === "conversation.item.input_audio_transcription.completed") {
         const transcript = event.transcript || "";
         if (transcript.trim()) {
-            const welcome = el("welcomeCard");
+            const welcome = document.getElementById("welcomeCard");
             if (welcome) welcome.remove();
             addMessage("user", transcript.trim());
         }
@@ -426,80 +446,89 @@ function setVoiceVisual(active, label) {
 
 function resetChat() {
     state.messages = [];
-    el("messages").innerHTML = `
-        <div class="welcome-card" id="welcomeCard">
-            <div class="welcome-icon">AI</div>
-            <div>
-                <h3 id="welcomeTitle">${t("welcomeTitle")}</h3>
-                <p id="welcomeText">${t("welcomeText")}</p>
+    const msgs = document.getElementById("messages");
+    if (msgs) {
+        msgs.innerHTML = `
+            <div class="welcome-card" id="welcomeCard">
+                <div class="welcome-icon">AI</div>
+                <div>
+                    <h3 id="welcomeTitle">${t("welcomeTitle")}</h3>
+                    <p id="welcomeText">${t("welcomeText")}</p>
+                </div>
             </div>
-        </div>
-    `;
-    el("messageInput").value = "";
+        `;
+    }
+    if (document.getElementById("messageInput")) document.getElementById("messageInput").value = "";
     el("statusText").textContent = t("ready");
 }
 
-el("languageButton").addEventListener("click", () => {
-    setLanguage(state.language === "en" ? "ar" : "en");
-});
-
-el("newChatButton").addEventListener("click", resetChat);
-
-el("askButton").addEventListener("click", () => {
-    el("messageInput").focus();
-    document.querySelector(".experience").scrollIntoView({ behavior: "smooth", block: "start" });
-});
-
-el("talkButton").addEventListener("click", () => {
-    document.querySelector(".voice-section").scrollIntoView({ behavior: "smooth", block: "center" });
-    if (!state.realtime.active) startVoice();
-});
-
-el("composer").addEventListener("submit", (event) => {
-    event.preventDefault();
-    sendText(el("messageInput").value);
-});
-
-el("voiceMessageButton").addEventListener("click", () => {
-    if (state.realtime.active) stopVoice();
-    else startVoice();
-});
-
-el("voiceMainButton").addEventListener("click", () => {
-    if (state.realtime.active) stopVoice();
-    else startVoice();
-});
-
-el("voiceStopButton").addEventListener("click", stopVoice);
-
-document.querySelectorAll(".quick-prompts button").forEach((button) => {
-    button.addEventListener("click", () => sendText(button.dataset.question));
-});
-
+// ربط جميع الأحداث والاشتراكات بأمان بعد اكتمال تحميل الصفحة
 document.addEventListener("DOMContentLoaded", () => {
     setLanguage(state.language);
-});
 
+    const bind = (id, event, fn) => {
+        const elem = document.getElementById(id);
+        if (elem) elem.addEventListener(event, fn);
+    };
 
-let deferredInstallPrompt = null;
-window.addEventListener("beforeinstallprompt", (event) => {
-    event.preventDefault();
-    deferredInstallPrompt = event;
-    const installButton = el("installAppButton");
-    if (installButton) installButton.hidden = false;
-});
+    bind("languageButton", "click", () => setLanguage(state.language === "en" ? "ar" : "en"));
+    bind("newChatButton", "click", resetChat);
 
-const installButton = el("installAppButton");
-if (installButton) {
-    installButton.addEventListener("click", async () => {
-        if (!deferredInstallPrompt) return;
-        deferredInstallPrompt.prompt();
-        await deferredInstallPrompt.userChoice;
-        deferredInstallPrompt = null;
-        installButton.hidden = true;
+    bind("askButton", "click", () => {
+        const input = document.getElementById("messageInput");
+        if (input) input.focus();
+        const exp = document.querySelector(".experience");
+        if (exp) exp.scrollIntoView({ behavior: "smooth", block: "start" });
     });
-}
 
-if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => navigator.serviceWorker.register("/static/service-worker.js").catch(() => {}));
-}
+    bind("talkButton", "click", () => {
+        const voiceSec = document.querySelector(".voice-section");
+        if (voiceSec) voiceSec.scrollIntoView({ behavior: "smooth", block: "center" });
+        if (!state.realtime.active) startVoice();
+    });
+
+    bind("composer", "submit", (event) => {
+        event.preventDefault();
+        const input = document.getElementById("messageInput");
+        if (input) sendText(input.value);
+    });
+
+    bind("voiceMessageButton", "click", () => {
+        if (state.realtime.active) stopVoice();
+        else startVoice();
+    });
+
+    bind("voiceMainButton", "click", () => {
+        if (state.realtime.active) stopVoice();
+        else startVoice();
+    });
+
+    bind("voiceStopButton", "click", stopVoice);
+
+    document.querySelectorAll(".quick-prompts button").forEach((button) => {
+        button.addEventListener("click", () => sendText(button.dataset.question));
+    });
+
+    let deferredInstallPrompt = null;
+    window.addEventListener("beforeinstallprompt", (event) => {
+        event.preventDefault();
+        deferredInstallPrompt = event;
+        const installButton = document.getElementById("installAppButton");
+        if (installButton) installButton.hidden = false;
+    });
+
+    const installButton = document.getElementById("installAppButton");
+    if (installButton) {
+        installButton.addEventListener("click", async () => {
+            if (!deferredInstallPrompt) return;
+            deferredInstallPrompt.prompt();
+            await deferredInstallPrompt.userChoice;
+            deferredInstallPrompt = null;
+            installButton.hidden = true;
+        });
+    }
+
+    if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("/static/service-worker.js").catch(() => {});
+    }
+});
