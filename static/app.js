@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const newChatButton = document.getElementById("newChatButton");
     const askButton = document.getElementById("askButton");
     const installAppBtn = document.getElementById("installAppBtn");
+    const quickPromptsContainer = document.querySelector(".quick-prompts");
 
     let currentLang = "en";
     let chatHistory = [];
@@ -66,7 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // --- الترجمات والقواميس ---
+    // --- الترجمات والقواميس مع الاقتراحات السريعة ---
     const translations = {
         en: {
             brandSubtitle: "AI ENGINEERING EXPERIENCE",
@@ -99,7 +100,13 @@ document.addEventListener("DOMContentLoaded", () => {
             langButtonText: "العربية",
             installBtnText: "Install App 📲",
             thinkingText: "Thinking...",
-            connErrorText: "Connection error. Please try again."
+            connErrorText: "Connection error. Please try again.",
+            prompts: [
+                { label: "What is AI?", question: "What is Artificial Intelligence? Explain it simply." },
+                { label: "AI vs ML vs DL", question: "What is the difference between AI, Machine Learning, and Deep Learning?" },
+                { label: "Beginner Projects", question: "What projects can I build as a beginner in AI engineering?" },
+                { label: "Career Skills", question: "What skills are required for the AI job market?" }
+            ]
         },
         ar: {
             brandSubtitle: "تجربة هندسة الذكاء الاصطناعي",
@@ -132,9 +139,29 @@ document.addEventListener("DOMContentLoaded", () => {
             langButtonText: "English",
             installBtnText: "تثبيت التطبيق 📲",
             thinkingText: "جاري التفكير...",
-            connErrorText: "تعذر الاتصال بالسيرفر. يرجى المحاولة لاحقاً."
+            connErrorText: "تعذر الاتصال بالسيرفر. يرجى المحاولة لاحقاً.",
+            prompts: [
+                { label: "ما هو AI؟", question: "ما هو الذكاء الاصطناعي؟ اشرحه ببساطة." },
+                { label: "AI vs ML vs DL", question: "ما الفرق بين الذكاء الاصطناعي وتعلّم الآلة والتعلّم العميق؟" },
+                { label: "مشاريع مبتدئة", question: "ما هي المشاريع التي يمكنني بناؤها كمبتدئ في هندسة الذكاء الاصطناعي؟" },
+                { label: "مهارات العمل", question: "ما هي المهارات المطلوبة لسوق العمل في المجال؟" }
+            ]
         }
     };
+
+    function renderQuickPrompts(prompts) {
+        if (!quickPromptsContainer) return;
+        quickPromptsContainer.innerHTML = "";
+        prompts.forEach(p => {
+            const btn = document.createElement("button");
+            btn.setAttribute("data-question", p.question);
+            btn.textContent = p.label;
+            btn.addEventListener("click", () => {
+                sendMessage(p.question);
+            });
+            quickPromptsContainer.appendChild(btn);
+        });
+    }
 
     function updateLanguage(lang) {
         currentLang = lang;
@@ -152,6 +179,9 @@ document.addEventListener("DOMContentLoaded", () => {
         if (languageButton) languageButton.textContent = t.langButtonText;
         if (messageInput) messageInput.placeholder = t.inputPlaceholder;
         if (installAppBtn) installAppBtn.textContent = t.installBtnText;
+
+        // تحديث أزرار الاقتراحات السريعة بلغة الصفحة الحالية
+        renderQuickPrompts(t.prompts);
     }
 
     if (languageButton) {
@@ -184,13 +214,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
-
-    document.querySelectorAll(".quick-prompts button").forEach(btn => {
-        btn.addEventListener("click", () => {
-            const q = btn.getAttribute("data-question");
-            if (q) sendMessage(q);
-        });
-    });
 
     if (composer) {
         composer.addEventListener("submit", (e) => {
@@ -244,4 +267,7 @@ document.addEventListener("DOMContentLoaded", () => {
         messages.scrollTop = messages.scrollHeight;
         return id;
     }
+
+    // تهيئة الاقتراحات السريعة عند بداية التحميل
+    renderQuickPrompts(translations[currentLang].prompts);
 });
