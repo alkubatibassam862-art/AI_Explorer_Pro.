@@ -3,7 +3,6 @@ import io
 from flask import Flask, render_template, request, jsonify, send_file
 from groq import Groq
 
-# تحديد مجلد Root كمصدر للـ templates لتفادي خطأ المجلدات
 app = Flask(__name__, template_folder='.', static_folder='.')
 
 @app.route('/')
@@ -31,6 +30,7 @@ def qr_code():
 def chat():
     api_key = os.environ.get("GROQ_API_KEY")
     if not api_key:
+        print("Error: GROQ_API_KEY environment variable is missing.")
         return jsonify({"answer": "عذراً، مفتاح API غير معرف في إعدادات البيئة."}), 500
 
     data = request.json or {}
@@ -53,9 +53,11 @@ def chat():
         })
 
     try:
-        client = Groq(api_key=api_key)
+        client = Groq(api_key=api_key.strip())
+        
+        # استخدام النموذج الأكثر استقراراً ودعماً في Groq
         response = client.chat.completions.create(
-            model="llama3-8b-8192",
+            model="llama-3.3-70b-versatile",
             messages=formatted_messages,
             temperature=0.7,
             max_tokens=800
@@ -63,8 +65,8 @@ def chat():
         answer = response.choices[0].message.content
         return jsonify({"answer": answer})
     except Exception as e:
-        print(f"Groq API Error: {str(e)}")
-        return jsonify({"answer": "عذراً، حدث انقطاع مؤقت في الاتصال بالخادم. يرجى المحاولة بعد لحظات."}), 500
+        print(f"Groq API Exception Details: {str(e)}")
+        return jsonify({"answer": f"خطأ في الاتصال بالنموذج: {str(e)}"}), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
