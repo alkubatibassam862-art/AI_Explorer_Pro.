@@ -10,6 +10,9 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>AI Explorer | AI Engineering</title>
     
+    <!-- PWA Manifest Dynamic Link -->
+    <link rel="manifest" id="manifestLink">
+
     <!-- خطوط جوجل -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -43,7 +46,6 @@
             position: relative;
         }
 
-        /* الخلفية السينمائية المشرقة */
         .background-grid {
             position: fixed;
             inset: 0;
@@ -58,7 +60,6 @@
             z-index: 0;
         }
 
-        /* هالات الإضاءة بالفضاء الخلفي */
         .glow {
             position: fixed;
             border-radius: 50%;
@@ -90,7 +91,6 @@
             100% { transform: scale(1.15); opacity: 0.45; }
         }
 
-        /* الشريط العلوي الزجاجي */
         .topbar {
             position: relative;
             z-index: 10;
@@ -142,6 +142,13 @@
             background: rgba(56, 189, 248, 0.15);
             border-color: var(--primary-bright);
             box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+        }
+
+        .install-app-btn {
+            background: linear-gradient(135deg, var(--primary-bright), var(--accent));
+            color: #030712;
+            font-weight: 700;
+            display: none;
         }
 
         main {
@@ -208,7 +215,6 @@
             box-shadow: 0 0 35px rgba(0, 240, 255, 0.7);
         }
 
-        /* تصميم الذرة والمدارات الحركية */
         .orb-area {
             position: relative;
             display: flex;
@@ -292,7 +298,6 @@
             100% { transform: rotateX(65deg) rotateY(100deg) rotateZ(360deg); }
         }
 
-        /* بطاقات الميزات */
         .feature-strip {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -323,7 +328,6 @@
             text-shadow: 0 0 10px var(--primary);
         }
 
-        /* نافذة المحادثة */
         .chat-shell {
             background: rgba(15, 23, 42, 0.75);
             border: 1px solid var(--panel-border);
@@ -405,7 +409,6 @@
             border-radius: 12px;
         }
 
-        /* قسم QR */
         .qr-card {
             background: linear-gradient(135deg, rgba(15, 23, 42, 0.8), rgba(30, 41, 59, 0.8));
             border: 1px solid var(--panel-border);
@@ -460,6 +463,7 @@
             </span>
         </a>
         <div class="top-actions">
+            <button class="install-app-btn" id="installAppBtn">تثبيت التطبيق 📲</button>
             <button class="language-button" id="languageButton">English</button>
             <button class="new-chat-button" id="newChatButton">محادثة جديدة</button>
         </div>
@@ -559,6 +563,32 @@
     </footer>
 
     <script>
+        // إعداد PWA Manifest و Service Worker تلقائياً
+        const manifestData = {
+            "name": "AI Explorer",
+            "short_name": "AI Explorer",
+            "start_url": "/",
+            "display": "standalone",
+            "background_color": "#030712",
+            "theme_color": "#030712",
+            "icons": [{
+                "src": "https://cdn-icons-png.flaticon.com/512/2103/2103832.png",
+                "sizes": "512x512",
+                "type": "image/png"
+            }]
+        };
+        const manifestBlob = new Blob([JSON.stringify(manifestData)], {type: 'application/json'});
+        document.getElementById('manifestLink').href = URL.createObjectURL(manifestBlob);
+
+        if ('serviceWorker' in navigator) {
+            const swCode = `
+                self.addEventListener('install', (e) => self.skipWaiting());
+                self.addEventListener('fetch', (e) => e.respondWith(fetch(e.request)));
+            `;
+            const swBlob = new Blob([swCode], {type: 'application/javascript'});
+            navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(() => {});
+        }
+
         document.addEventListener("DOMContentLoaded", () => {
             const composer = document.getElementById('composer');
             const messageInput = document.getElementById('messageInput');
@@ -566,8 +596,28 @@
             const newChatButton = document.getElementById('newChatButton');
             const languageButton = document.getElementById('languageButton');
             const askButton = document.getElementById('askButton');
+            const installAppBtn = document.getElementById('installAppBtn');
+            let deferredPrompt = null;
             let chatHistory = [];
             let currentLang = 'ar';
+
+            // التقاط حدث تثبيت الـ PWA لتمكين زر التحميل المباشر
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                installAppBtn.style.display = 'inline-block';
+            });
+
+            installAppBtn.addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    if (outcome === 'accepted') {
+                        installAppBtn.style.display = 'none';
+                    }
+                    deferredPrompt = null;
+                }
+            });
 
             const translations = {
                 ar: {
@@ -592,7 +642,8 @@
                     takeAILabel: "خذ الذكاء الاصطناعي معك",
                     qrTitle: "امسح. افتح. استكشف.",
                     qrText: "يمكن للزوار مسح كود QR باستخدام الجوال لفتح تجربة AI Explorer المباشرة.",
-                    footerLabel: "معرض هندسة الذكاء الاصطناعي"
+                    footerLabel: "معرض هندسة الذكاء الاصطناعي",
+                    installBtn: "تثبيت التطبيق 📲"
                 },
                 en: {
                     langBtn: "العربية",
@@ -616,7 +667,8 @@
                     takeAILabel: "TAKE AI WITH YOU",
                     qrTitle: "Scan. Open. Explore.",
                     qrText: "Visitors can scan the QR code using their phone to open the live AI Explorer experience.",
-                    footerLabel: "AI Engineering Exhibition"
+                    footerLabel: "AI Engineering Exhibition",
+                    installBtn: "Install App 📲"
                 }
             };
 
@@ -629,6 +681,7 @@
 
                 languageButton.innerText = t.langBtn;
                 newChatButton.innerText = t.newChat;
+                installAppBtn.innerText = t.installBtn;
                 document.getElementById('brandSubtitle').innerText = t.subtitle;
                 document.getElementById('heroEyebrow').innerText = t.eyebrow;
                 document.getElementById('heroTitle').innerHTML = t.heroTitle;
