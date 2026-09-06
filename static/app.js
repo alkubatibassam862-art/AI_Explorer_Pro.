@@ -5,10 +5,68 @@ document.addEventListener("DOMContentLoaded", () => {
     const languageButton = document.getElementById("languageButton");
     const newChatButton = document.getElementById("newChatButton");
     const askButton = document.getElementById("askButton");
+    const installAppBtn = document.getElementById("installAppBtn");
 
     let currentLang = "en";
     let chatHistory = [];
+    let deferredPrompt = null;
 
+    // --- إعداد PWA تلقائياً (Manifest & Service Worker) ---
+    const manifestData = {
+        "name": "AI Explorer",
+        "short_name": "AI Explorer",
+        "start_url": "/",
+        "display": "standalone",
+        "background_color": "#030712",
+        "theme_color": "#030712",
+        "icons": [{
+            "src": "https://cdn-icons-png.flaticon.com/512/2103/2103832.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }]
+    };
+    const manifestBlob = new Blob([JSON.stringify(manifestData)], { type: 'application/json' });
+    let manifestLink = document.getElementById('manifestLink');
+    if (!manifestLink) {
+        manifestLink = document.createElement('link');
+        manifestLink.id = 'manifestLink';
+        manifestLink.rel = 'manifest';
+        document.head.appendChild(manifestLink);
+    }
+    manifestLink.href = URL.createObjectURL(manifestBlob);
+
+    if ('serviceWorker' in navigator) {
+        const swCode = `
+            self.addEventListener('install', (e) => self.skipWaiting());
+            self.addEventListener('fetch', (e) => e.respondWith(fetch(e.request)));
+        `;
+        const swBlob = new Blob([swCode], { type: 'application/javascript' });
+        navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(() => {});
+    }
+
+    // --- التقاط حدث تثبيت الـ PWA ---
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        if (installAppBtn) {
+            installAppBtn.style.display = 'inline-block';
+        }
+    });
+
+    if (installAppBtn) {
+        installAppBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    installAppBtn.style.display = 'none';
+                }
+                deferredPrompt = null;
+            }
+        });
+    }
+
+    // --- الترجمات والقواميس ---
     const translations = {
         en: {
             brandSubtitle: "AI ENGINEERING EXPERIENCE",
@@ -38,7 +96,10 @@ document.addEventListener("DOMContentLoaded", () => {
             qrText: "Visitors can scan this QR code with any phone and open the AI Explorer experience.",
             qrNote: "For the exhibition, visitors can scan to try the app on their phones.",
             footerLabel: "AI Engineering Exhibition Experience",
-            langButtonText: "العربية"
+            langButtonText: "العربية",
+            installBtnText: "Install App 📲",
+            thinkingText: "Thinking...",
+            connErrorText: "Connection error. Please try again."
         },
         ar: {
             brandSubtitle: "تجربة هندسة الذكاء الاصطناعي",
@@ -68,7 +129,10 @@ document.addEventListener("DOMContentLoaded", () => {
             qrText: "يمكن للزوار مسح رمز QR من أي هاتف وفتح التجربة مباشرة.",
             qrNote: "في المعرض، يمكن للزوار المسح لتجربة التطبيق على هواتفهم.",
             footerLabel: "تجربة معرض هندسة الذكاء الاصطناعي",
-            langButtonText: "English"
+            langButtonText: "English",
+            installBtnText: "تثبيت التطبيق 📲",
+            thinkingText: "جاري التفكير...",
+            connErrorText: "تعذر الاتصال بالسيرفر. يرجى المحاولة لاحقاً."
         }
     };
 
@@ -87,6 +151,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         if (languageButton) languageButton.textContent = t.langButtonText;
         if (messageInput) messageInput.placeholder = t.inputPlaceholder;
+        if (installAppBtn) installAppBtn.textContent = t.installBtnText;
     }
 
     if (languageButton) {
@@ -97,22 +162,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (askButton) {
         askButton.addEventListener("click", () => {
-            messageInput.focus();
-            messageInput.scrollIntoView({ behavior: "smooth" });
+            if (messageInput) {
+                messageInput.focus();
+                messageInput.scrollIntoView({ behavior: "smooth" });
+            }
         });
     }
 
     if (newChatButton) {
         newChatButton.addEventListener("click", () => {
             chatHistory = [];
-            messages.innerHTML = `
-                <div class="welcome-card" id="welcomeCard">
-                    <div class="welcome-icon">AI</div>
-                    <div>
-                        <h3 id="welcomeTitle">${translations[currentLang].welcomeTitle}</h3>
-                        <p id="welcomeText">${translations[currentLang].welcomeText}</p>
-                    </div>
-                </div>`;
+            if (messages) {
+                messages.innerHTML = `
+                    <div class="welcome-card" id="welcomeCard">
+                        <div class="welcome-icon">AI</div>
+                        <div>
+                            <h3 id="welcomeTitle">${translations[currentLang].welcomeTitle}</h3>
+                            <p id="welcomeText">${translations[currentLang].welcomeText}</p>
+                        </div>
+                    </div>`;
+            }
         });
     }
 
@@ -141,7 +210,7 @@ document.addEventListener("DOMContentLoaded", () => {
         appendMessage("user", text);
         chatHistory.push({ role: "user", content: text });
 
-        const loadingId = appendMessage("assistant", "...");
+        const loadingId = appendMessage("assistant", translations[currentLang].thinkingText);
 
         try {
             const res = await fetch("/api/chat", {
@@ -160,11 +229,12 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         } catch (err) {
             const loadingEl = document.getElementById(loadingId);
-            if (loadingEl) loadingEl.textContent = "Connection error. Please try again.";
+            if (loadingEl) loadingEl.textContent = translations[currentLang].connErrorText;
         }
     }
 
     function appendMessage(role, content) {
+        if (!messages) return;
         const msgDiv = document.createElement("div");
         const id = "msg-" + Date.now();
         msgDiv.id = id;
