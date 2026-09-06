@@ -1,158 +1,274 @@
 <!doctype html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#070b16">
-    <meta name="application-name" content="AI Explorer">
-    <title>AI Explorer | AI Engineering</title>
+    <title>AI Explorer | تجربة الذكاء الاصطناعي</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Arabic:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- استدعاء مزدوج للمتصفح لمنع أخطاء المسارات -->
-    <link rel="stylesheet" href="/style.css">
+    <style>
+        :root {
+            --bg-dark: #070b16;
+            --panel-bg: rgba(15, 23, 42, 0.75);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --accent-blue: #38bdf8;
+            --accent-purple: #818cf8;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Noto Sans Arabic', 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 25px;
+            background: var(--panel-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text-main);
+        }
+
+        .brand-mark {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            color: #000;
+            font-weight: 800;
+            padding: 6px 12px;
+            border-radius: 8px;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 40px 20px;
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+        }
+
+        .hero h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #fff, var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .chat-shell {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            min-height: 400px;
+        }
+
+        .messages {
+            flex-grow: 1;
+            overflow-y: auto;
+            max-height: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding-right: 5px;
+        }
+
+        .message {
+            padding: 12px 18px;
+            border-radius: 12px;
+            max-width: 80%;
+            line-height: 1.5;
+        }
+
+        .user-message {
+            background: var(--accent-purple);
+            color: #fff;
+            align-self: flex-start;
+        }
+
+        .assistant-message {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            align-self: flex-end;
+        }
+
+        .composer {
+            display: flex;
+            gap: 10px;
+        }
+
+        input {
+            flex-grow: 1;
+            padding: 14px 18px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: var(--accent-blue);
+        }
+
+        button.send-button {
+            padding: 14px 28px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            border: none;
+            border-radius: 12px;
+            color: #000;
+            font-weight: 700;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        button.send-button:hover { opacity: 0.9; }
+
+        .quick-prompts {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .quick-prompts button {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 8px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .quick-prompts button:hover {
+            color: var(--text-main);
+            border-color: var(--accent-blue);
+        }
+    </style>
 </head>
 <body>
-    <div class="background-grid"></div>
-    <div class="glow glow-one"></div>
-    <div class="glow glow-two"></div>
 
-    <header class="topbar">
-        <a class="brand" href="/">
-            <span class="brand-mark">AI</span>
-            <span>
+    <div class="container">
+        <header>
+            <a class="brand" href="/">
+                <span class="brand-mark">AI</span>
                 <strong>AI EXPLORER</strong>
-                <small id="brandSubtitle">AI ENGINEERING EXPERIENCE</small>
-            </span>
-        </a>
-        <div class="top-actions">
-            <button class="language-button" id="languageButton">العربية</button>
-            <button class="new-chat-button" id="newChatButton">New Chat</button>
-        </div>
-    </header>
+            </a>
+            <span style="color: var(--text-muted); font-size: 0.9rem;">معرض الذكاء الاصطناعي</span>
+        </header>
 
-    <main>
         <section class="hero">
-            <div class="hero-copy">
-                <div class="eyebrow" id="heroEyebrow">ARTIFICIAL INTELLIGENCE</div>
-                <h1 id="heroTitle">Ask AI.<br><span>Understand AI.</span><br>Build the future.</h1>
-                <p id="heroText">Explore Artificial Intelligence through interactive questions, real examples, and intelligent responses.</p>
-                <div class="hero-buttons">
-                    <button class="primary-button" id="askButton">Ask a question</button>
-                </div>
-                <div class="live-status">
-                    <span class="status-dot"></span>
-                    <span id="statusText">Ready</span>
-                </div>
-            </div>
-
-            <div class="orb-area">
-                <div class="orb-ring ring-one"></div>
-                <div class="orb-ring ring-two"></div>
-                <div class="orb">
-                    <div class="orb-core"></div>
-                    <div class="orb-wave wave-one"></div>
-                    <div class="orb-wave wave-two"></div>
-                    <div class="orb-wave wave-three"></div>
-                </div>
-                <div class="orb-label" id="orbLabel">AI READY</div>
-            </div>
+            <h1>اسأل الذكاء الاصطناعي. افهم المستقبل.</h1>
+            <p style="color: var(--text-muted);">منصة تفاعلية للإجابة عن أسئلة هندسة الذكاء الاصطناعي والتقنية.</p>
         </section>
 
-        <section class="feature-strip">
-            <article class="feature-card">
-                <div class="feature-number">01</div>
-                <h3 id="featureOneTitle">Ask anything</h3>
-                <p id="featureOneText">From “What is AI?” to advanced AI Engineering questions.</p>
-            </article>
-            <article class="feature-card">
-                <div class="feature-number">02</div>
-                <h3 id="featureTwoTitle">Instant Answers</h3>
-                <p id="featureTwoText">Get fast, practical, and clear technical explanations.</p>
-            </article>
-            <article class="feature-card">
-                <div class="feature-number">03</div>
-                <h3 id="featureThreeTitle">Learn by examples</h3>
-                <p id="featureThreeText">See how AI connects to jobs, medicine, cars, business, and daily life.</p>
-            </article>
-        </section>
-
-        <section class="experience">
-            <div class="section-heading">
-                <div>
-                    <div class="eyebrow" id="liveExperienceLabel">LIVE EXPERIENCE</div>
-                    <h2 id="chatTitle">Your AI conversation</h2>
-                </div>
-                <div class="mode-pill" id="modePill">TEXT MODE</div>
-            </div>
-
-            <div class="chat-shell">
-                <div class="chat-header">
-                    <div class="assistant-profile">
-                        <div class="mini-orb"></div>
-                        <div>
-                            <strong>AI Explorer</strong>
-                            <span id="assistantSubtitle">AI Engineering Assistant</span>
-                        </div>
-                    </div>
-                    <div class="connection-indicator">
-                        <span class="status-dot"></span>
-                        <span id="connectionText">Online</span>
-                    </div>
-                </div>
-
-                <div class="messages" id="messages">
-                    <div class="welcome-card" id="welcomeCard">
-                        <div class="welcome-icon">AI</div>
-                        <div>
-                            <h3 id="welcomeTitle">What would you like to discover?</h3>
-                            <p id="welcomeText">Type a question or select a prompt below to get started.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="quick-prompts">
-                    <button data-question="What is Artificial Intelligence? Explain it simply.">What is AI?</button>
-                    <button data-question="Can Artificial Intelligence take people's jobs? Give me a balanced explanation with examples.">Can AI take jobs?</button>
-                    <button data-question="What is the difference between AI, Machine Learning, and Deep Learning?">AI vs ML vs DL</button>
-                    <button data-question="What can I build as a beginner AI Engineering student?">What can I build?</button>
-                    <button data-question="What careers can I have after studying AI Engineering?">AI careers</button>
-                </div>
-
-                <form class="composer" id="composer">
-                    <input id="messageInput" autocomplete="off" placeholder="Ask anything about AI..." maxlength="4000">
-                    <button type="submit" class="send-button" id="sendButton">Send</button>
-                </form>
-            </div>
-        </section>
-
-        <section class="qr-section">
-            <div class="qr-card">
-                <div>
-                    <div class="eyebrow" id="takeAILabel">TAKE AI WITH YOU</div>
-                    <h2 id="qrTitle">Scan. Open. Talk.</h2>
-                    <p id="qrText">Visitors can scan this QR code with any phone and open the AI Explorer experience.</p>
-                    <div class="url-box">{{ public_url }}</div>
-                    <p class="qr-note" id="qrNote">For the exhibition, visitors can scan to try the app on their phones.</p>
-                </div>
-                <div class="qr-frame">
-                    <img src="/qr" alt="AI Explorer QR code">
+        <section class="chat-shell">
+            <div class="messages" id="messages">
+                <div class="message assistant-message">
+                    مرحباً بك! أنا مساعد الذكاء الاصطناعي، كيف يمكنني مساعدتك اليوم؟
                 </div>
             </div>
-        </section>
-    </main>
 
-    <footer>
-        <span>AI EXPLORER</span>
-        <span id="footerLabel">AI Engineering Exhibition Experience</span>
-    </footer>
+            <div class="quick-prompts">
+                <button onclick="sendQuick('ما هو الذكاء الاصطناعي؟')">ما هو الذكاء الاصطناعي؟</button>
+                <button onclick="sendQuick('ما الفرق بين AI و Machine Learning؟')">AI vs ML</button>
+                <button onclick="sendQuick('كيف أبدأ في هندسة الذكاء الاصطناعي؟')">كيف أبدأ؟</button>
+            </div>
+
+            <form class="composer" id="composer">
+                <input id="messageInput" autocomplete="off" placeholder="اكتب سؤالك هنا..." maxlength="4000">
+                <button type="submit" class="send-button">إرسال</button>
+            </form>
+        </section>
+    </div>
 
     <script>
-        window.AI_EXPLORER_CONFIG = {
-            publicUrl: {{ public_url|tojson }},
-            textModel: {{ text_model|tojson }}
-        };
+        const messages = document.getElementById("messages");
+        const composer = document.getElementById("composer");
+        const messageInput = document.getElementById("messageInput");
+        let chatHistory = [];
+
+        composer.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const text = messageInput.value.trim();
+            if (text) {
+                sendMessage(text);
+                messageInput.value = "";
+            }
+        });
+
+        function sendQuick(text) {
+            sendMessage(text);
+        }
+
+        async function sendMessage(text) {
+            appendMessage("user", text);
+            chatHistory.push({ role: "user", content: text });
+
+            const loadingId = appendMessage("assistant", "جاري التفكير...");
+
+            try {
+                const res = await fetch("/api/chat", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ messages: chatHistory, language: "ar" })
+                });
+                const data = await res.json();
+                const loadingEl = document.getElementById(loadingId);
+
+                if (data.answer) {
+                    loadingEl.textContent = data.answer;
+                    chatHistory.push({ role: "assistant", content: data.answer });
+                } else {
+                    loadingEl.textContent = "حدث خطأ: " + (data.error || "تعذر الحصول على إجابة");
+                }
+            } catch (err) {
+                document.getElementById(loadingId).textContent = "فشل الاتصال بالخادم.";
+            }
+        }
+
+        function appendMessage(role, content) {
+            const msgDiv = document.createElement("div");
+            const id = "msg-" + Date.now();
+            msgDiv.id = id;
+            msgDiv.className = `message ${role}-message`;
+            msgDiv.textContent = content;
+            messages.appendChild(msgDiv);
+            messages.scrollTop = messages.scrollHeight;
+            return id;
+        }
     </script>
-    <script src="/app.js"></script>
+
 </body>
 </html>
