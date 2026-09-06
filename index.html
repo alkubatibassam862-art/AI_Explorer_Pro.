@@ -3,541 +3,374 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Explorer | معرض تعليمتي</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&family=Readex+Pro:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>3D AI World | معرض تعليمتي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- مكتبة Three.js لتصاميم الـ 3D -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
         :root {
-            --bg-dark: #05070f;
-            --card-bg: rgba(13, 20, 36, 0.7);
-            --glass-border: rgba(99, 102, 241, 0.3);
+            --glass-bg: rgba(13, 20, 36, 0.65);
+            --glass-border: rgba(99, 102, 241, 0.35);
             --primary-glow: #6366f1;
             --accent-cyan: #06b6d4;
-            --accent-purple: #a855f7;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
-            --user-msg: linear-gradient(135deg, #4f46e5, #9333ea);
-            --bot-msg: rgba(26, 35, 58, 0.85);
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Readex Pro', 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Readex Pro', sans-serif;
         }
 
         body {
-            background-color: var(--bg-dark);
+            background-color: #030508;
             color: var(--text-main);
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            overflow-x: hidden;
+            overflow: hidden;
             position: relative;
         }
 
-        /* Animated Futuristic Background */
-        .bg-glow {
+        /* الكانفاس الخاص بالـ 3D خلف كل العناصر */
+        #webgl-canvas {
             position: absolute;
-            border-radius: 50%;
-            filter: blur(120px);
-            z-index: -1;
-            animation: pulse 8s infinite alternate;
-        }
-        .glow-1 { top: -10%; left: -10%; width: 500px; height: 500px; background: rgba(99, 102, 241, 0.25); }
-        .glow-2 { bottom: -10%; right: -10%; width: 500px; height: 500px; background: rgba(6, 182, 212, 0.2); }
-        .glow-3 { top: 40%; left: 40%; width: 300px; height: 300px; background: rgba(168, 85, 247, 0.15); }
-
-        @keyframes pulse {
-            0% { transform: scale(1) translate(0, 0); }
-            100% { transform: scale(1.15) translate(30px, -20px); }
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
         }
 
+        /* واجهة المستخدم الزجاجية فوق الـ 3D */
         .app-layout {
-            width: 100%;
-            max-width: 1250px;
-            height: 92vh;
+            position: relative;
+            z-index: 2;
+            width: 100vw;
+            height: 100vh;
             display: grid;
             grid-template-columns: 340px 1fr;
-            gap: 25px;
-            z-index: 1;
+            gap: 20px;
+            padding: 20px;
+            pointer-events: none; /* يسمح بالتفاعل مع الـ 3D في الخلفية */
+        }
+
+        .interactive {
+            pointer-events: auto; /* تفعيل التفاعل مع البطاقات والأزرار */
         }
 
         /* Sidebar Styling */
         .sidebar {
-            background: var(--card-bg);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
             border: 1px solid var(--glass-border);
             border-radius: 28px;
-            padding: 30px;
+            padding: 25px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
             text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .sidebar::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--primary-glow), var(--accent-cyan), var(--accent-purple));
         }
 
         .brand-badge {
             width: 60px;
             height: 60px;
             background: linear-gradient(135deg, var(--primary-glow), var(--accent-cyan));
-            border-radius: 20px;
+            border-radius: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 28px;
+            font-size: 26px;
             font-weight: 700;
-            margin: 0 auto 15px auto;
+            margin: 0 auto 12px auto;
             box-shadow: 0 0 25px rgba(99, 102, 241, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        .sidebar-header h2 {
-            font-size: 1.35rem;
-            font-weight: 700;
-            background: linear-gradient(90deg, #ffffff, #c7d2fe);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 6px;
-        }
-
-        .sidebar-header p {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
-
-        /* Metrics Display Box */
-        .metrics-box {
-            width: 100%;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin: 15px 0;
-        }
-
-        .metric-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.07);
-            border-radius: 14px;
-            padding: 10px;
-            text-align: center;
-        }
-
-        .metric-card .val {
-            font-weight: bold;
-            font-size: 0.95rem;
-            color: var(--accent-cyan);
-        }
-
-        .metric-card .lbl {
-            font-size: 0.7rem;
-            color: var(--text-muted);
-        }
-
-        /* QR Code Container */
         .qr-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 22px;
-            padding: 20px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 15px;
             width: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 12px;
-            transition: transform 0.3s ease;
-        }
-
-        .qr-card:hover {
-            transform: translateY(-3px);
-            border-color: var(--primary-glow);
-            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.2);
+            gap: 10px;
         }
 
         .qr-img {
-            width: 160px;
-            height: 160px;
-            border-radius: 14px;
+            width: 150px;
+            height: 150px;
+            border-radius: 12px;
             background: #fff;
-            padding: 10px;
-            box-shadow: 0 0 25px rgba(6, 182, 212, 0.3);
+            padding: 8px;
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.4);
         }
 
-        .qr-text {
-            font-size: 0.8rem;
-            color: #c7d2fe;
-            font-weight: 600;
-        }
-
-        /* Chat Container */
+        /* Chat Window */
         .chat-container {
-            background: var(--card-bg);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
             border: 1px solid var(--glass-border);
             border-radius: 28px;
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
         }
 
         .chat-header {
-            padding: 18px 30px;
+            padding: 18px 25px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            background: rgba(8, 13, 24, 0.5);
+            background: rgba(8, 13, 24, 0.4);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .chat-header-title {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .status-dot {
-            width: 10px;
-            height: 10px;
-            background: #10b981;
-            border-radius: 50%;
-            box-shadow: 0 0 12px #10b981;
-            animation: blink 2s infinite;
-        }
-
-        /* Top Action Controls */
-        .header-actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        .action-btn {
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            color: #fff;
-            padding: 8px 14px;
-            border-radius: 12px;
-            font-size: 0.82rem;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .action-btn:hover {
-            background: var(--primary-glow);
-            border-color: var(--primary-glow);
-            box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
-            transform: translateY(-1px);
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
         }
 
         .chat-area {
             flex: 1;
-            padding: 30px;
+            padding: 25px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 20px;
-            scroll-behavior: smooth;
+            gap: 15px;
         }
 
         .message {
-            max-width: 78%;
-            padding: 16px 22px;
-            border-radius: 20px;
-            font-size: 0.95rem;
+            max-width: 75%;
+            padding: 14px 20px;
+            border-radius: 18px;
+            font-size: 0.92rem;
             line-height: 1.6;
-            animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            word-wrap: break-word;
         }
 
         .message.user {
             align-self: flex-start;
-            background: var(--user-msg);
+            background: linear-gradient(135deg, #4f46e5, #9333ea);
             color: #fff;
             border-bottom-right-radius: 4px;
-            box-shadow: 0 8px 20px rgba(124, 58, 237, 0.3);
         }
 
         .message.bot {
             align-self: flex-end;
-            background: var(--bot-msg);
-            color: var(--text-main);
+            background: rgba(26, 35, 58, 0.85);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-bottom-left-radius: 4px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        .suggestions {
-            display: flex;
-            gap: 10px;
-            overflow-x: auto;
-            padding: 12px 30px;
-            background: rgba(5, 7, 15, 0.4);
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .chip {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--text-muted);
-            padding: 10px 18px;
-            border-radius: 22px;
-            font-size: 0.82rem;
-            cursor: pointer;
-            white-space: nowrap;
-            transition: all 0.3s;
-        }
-
-        .chip:hover {
-            background: var(--primary-glow);
-            color: #fff;
-            border-color: var(--primary-glow);
-            box-shadow: 0 0 15px rgba(99, 102, 241, 0.5);
-            transform: translateY(-2px);
         }
 
         .input-area {
-            padding: 20px 30px;
-            background: rgba(8, 13, 24, 0.7);
+            padding: 18px 25px;
+            background: rgba(8, 13, 24, 0.6);
             display: flex;
-            gap: 15px;
+            gap: 12px;
         }
 
         .input-area input {
             flex: 1;
-            background: rgba(255, 255, 255, 0.04);
+            background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--glass-border);
-            padding: 16px 24px;
-            border-radius: 16px;
+            padding: 14px 20px;
+            border-radius: 14px;
             color: #fff;
-            font-size: 1rem;
             outline: none;
-            transition: all 0.3s;
         }
 
-        .input-area input:focus {
-            border-color: var(--accent-cyan);
-            box-shadow: 0 0 20px rgba(6, 182, 212, 0.35);
-            background: rgba(255, 255, 255, 0.07);
-        }
-
-        .send-btn {
+        .send-btn, .action-btn {
             background: linear-gradient(135deg, var(--primary-glow), var(--accent-cyan));
             color: #fff;
             border: none;
-            padding: 16px 32px;
-            border-radius: 16px;
-            font-weight: 700;
-            font-size: 0.95rem;
+            padding: 12px 24px;
+            border-radius: 14px;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
         }
 
-        .send-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(6, 182, 212, 0.6);
-        }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(12px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @media (max-width: 920px) {
-            .app-layout { grid-template-columns: 1fr; height: auto; }
-            .sidebar { order: 2; }
+        @media (max-width: 900px) {
+            .app-layout { grid-template-columns: 1fr; height: auto; overflow-y: auto; }
+            body { overflow-y: auto; }
         }
     </style>
 </head>
 <body>
 
-    <div class="bg-glow glow-1"></div>
-    <div class="bg-glow glow-2"></div>
-    <div class="bg-glow glow-3"></div>
+    <!-- الكانفاس المسؤول عن رندر الأشكال الـ 3D -->
+    <canvas id="webgl-canvas"></canvas>
 
     <div class="app-layout">
-        <!-- الشريط الجانبي الفخم -->
-        <div class="sidebar">
-            <div class="sidebar-header">
-                <div class="brand-badge">AI</div>
-                <h2 id="sbTitle">معرض تعليمتي</h2>
-                <p id="sbSub">جناح هندسة الذكاء الاصطناعي</p>
-            </div>
-
-            <div class="metrics-box">
-                <div class="metric-card">
-                    <div class="val">LLaMA 3.3</div>
-                    <div class="lbl" id="m1Lbl">النموذج النشط</div>
-                </div>
-                <div class="metric-card">
-                    <div class="val">&lt; 1s</div>
-                    <div class="lbl" id="m2Lbl">سرعة الاستجابة</div>
-                </div>
+        <!-- Sidebar -->
+        <div class="sidebar interactive">
+            <div>
+                <div class="brand-badge">3D</div>
+                <h2>معرض تعليمتي</h2>
+                <p style="font-size: 0.8rem; color: var(--text-muted);">عالم الذكاء الاصطناعي التفاعلي</p>
             </div>
 
             <div class="qr-card">
                 <img src="/qr" alt="QR Code" class="qr-img">
-                <div class="qr-text" id="qrTxt">امسح الكود لتجربة المحادثة عبر الجوال 📱</div>
+                <p style="font-size: 0.8rem; color: #c7d2fe;">امسح الكود لفتح الشات عبر الجوال 📱</p>
             </div>
 
-            <div id="sbFooter" style="font-size: 0.75rem; color: var(--text-muted); border-top: 1px solid rgba(255,255,255,0.08); width: 100%; padding-top: 12px;">
-                تجربة تفاعلية حية لمستقبل التعلم ✨
-            </div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">حرك الماوس لتتدفق الأشكال الـ 3D ✨</div>
         </div>
 
-        <!-- منطقة المحادثة الرئيسية -->
-        <div class="chat-container">
+        <!-- Chat Container -->
+        <div class="chat-container interactive">
             <div class="chat-header">
-                <div class="chat-header-title">
-                    <div class="status-dot"></div>
-                    <h1 id="headerTitle" style="font-size: 1.1rem; font-weight: 700;">المساعد الذكي للهندسة والتكنولوجيا</h1>
-                </div>
-
-                <!-- أزرار التحكم العليا -->
-                <div class="header-actions">
-                    <button class="action-btn" onclick="newChat()">
-                        <span>🔄</span> <span id="btnNewChat">محادثة جديدة</span>
-                    </button>
-                    <button class="action-btn" onclick="toggleLanguage()">
-                        <span>🌐</span> <span id="btnLang">English</span>
-                    </button>
+                <h3>🤖 المساعد الذكي ثلاثي الأبعاد</h3>
+                <div>
+                    <button class="action-btn" onclick="newChat()" style="padding: 8px 14px; font-size: 0.8rem;">🔄 محادثة جديدة</button>
                 </div>
             </div>
 
             <div class="chat-area" id="chatBox">
-                <div class="message bot" id="welcomeMsg">
-                    أهلاً بك في جناح الذكاء الاصطناعي بمعرض تعليمتي! 🚀 اسألني عن أي موضوع في التكنولوجيا، البرمجة، أو مستقبل الوظائف وستجد إجابة واضحة ومباشرة.
-                </div>
-            </div>
-
-            <div class="suggestions" id="suggestionsBox">
-                <!-- اقتراحات تفاعلية تتحول مع اللغة -->
+                <div class="message bot">أهلاً بك! استمتع بالتصميم الـ 3D التفاعلي في الخلفية واسألني عن أي شيء! 🚀</div>
             </div>
 
             <div class="input-area">
                 <input type="text" id="userInput" placeholder="اكتب سؤالك هنا..." onkeypress="handleKey(event)">
-                <button class="send-btn" id="sendBtnText" onclick="sendMessage()">إرسال</button>
+                <button class="send-btn" onclick="sendMessage()">إرسال</button>
             </div>
         </div>
     </div>
 
+    <!-- 3D Engine Script using Three.js -->
     <script>
-        let chatHistory = [];
-        let currentLang = 'ar'; // 'ar' أو 'en'
+        // 1. Scene, Camera, Renderer Setup
+        const canvas = document.getElementById('webgl-canvas');
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0x030508, 0.015);
 
-        const translations = {
-            ar: {
-                sbTitle: "معرض تعليمتي",
-                sbSub: "جناح هندسة الذكاء الاصطناعي",
-                m1Lbl: "النموذج النشط",
-                m2Lbl: "سرعة الاستجابة",
-                qrTxt: "امسح الكود لتجربة المحادثة عبر الجوال 📱",
-                sbFooter: "تجربة تفاعلية حية لمستقبل التعلم ✨",
-                headerTitle: "المساعد الذكي للهندسة والتكنولوجيا",
-                btnNewChat: "محادثة جديدة",
-                btnLang: "English",
-                welcomeMsg: "أهلاً بك في جناح الذكاء الاصطناعي بمعرض تعليمتي! 🚀 اسألني عن أي موضوع في التكنولوجيا، البرمجة، أو مستقبل الوظائف وستجد إجابة واضحة ومباشرة.",
-                inputPh: "اكتب سؤالك هنا... (يفهم اللهجات والأخطاء الإملائية)",
-                sendBtn: "إرسال",
-                thinking: "جاري التفكير والأجابة...",
-                errConnection: "حدث خطأ في الاتصال بالخادم.",
-                suggestions: [
-                    { label: "ما هو الذكاء الاصطناعي؟", text: "ما هو الذكاء الاصطناعي ببساطة؟" },
-                    { label: "هل يستبدل الوظائف؟", text: "هل يستبدل الذكاء الاصطناعي الوظائف؟" },
-                    { label: "الفرق بين AI و ML", text: "ما الفرق بين AI و ML؟" },
-                    { label: "كيف أبدأ التعلم؟", text: "كيف أبدأ تعلم البرمجة والذكاء الاصطناعي؟" }
-                ]
-            },
-            en: {
-                sbTitle: "Talimati Exhibition",
-                sbSub: "AI Engineering Pavilion",
-                m1Lbl: "Active Model",
-                m2Lbl: "Response Time",
-                qrTxt: "Scan QR code to chat on mobile 📱",
-                sbFooter: "Interactive Live Experience for Future Learning ✨",
-                headerTitle: "AI & Engineering Smart Assistant",
-                btnNewChat: "New Chat",
-                btnLang: "العربية",
-                welcomeMsg: "Welcome to the AI Pavilion at Talimati Exhibition! 🚀 Ask me anything about tech, programming, or future careers for quick answers.",
-                inputPh: "Type your question here...",
-                sendBtn: "Send",
-                thinking: "Thinking and generating response...",
-                errConnection: "Connection error with server.",
-                suggestions: [
-                    { label: "What is AI?", text: "What is Artificial Intelligence in simple terms?" },
-                    { label: "Will AI replace jobs?", text: "Will AI replace human jobs?" },
-                    { label: "AI vs Machine Learning", text: "What is the difference between AI and ML?" },
-                    { label: "How to start learning?", text: "How can I start learning programming and AI?" }
-                ]
-            }
-        };
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 30;
 
-        function renderUI() {
-            const t = translations[currentLang];
-            document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
-            document.documentElement.lang = currentLang;
+        const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-            document.getElementById('sbTitle').innerText = t.sbTitle;
-            document.getElementById('sbSub').innerText = t.sbSub;
-            document.getElementById('m1Lbl').innerText = t.m1Lbl;
-            document.getElementById('m2Lbl').innerText = t.m2Lbl;
-            document.getElementById('qrTxt').innerText = t.qrTxt;
-            document.getElementById('sbFooter').innerText = t.sbFooter;
-            document.getElementById('headerTitle').innerText = t.headerTitle;
-            document.getElementById('btnNewChat').innerText = t.btnNewChat;
-            document.getElementById('btnLang').innerText = t.btnLang;
-            document.getElementById('userInput').placeholder = t.inputPh;
-            document.getElementById('sendBtnText').innerText = t.sendBtn;
+        // 2. Lights
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+        scene.add(ambientLight);
 
-            // Render chips
-            const sugContainer = document.getElementById('suggestionsBox');
-            sugContainer.innerHTML = '';
-            t.suggestions.forEach(s => {
-                const chip = document.createElement('div');
-                chip.className = 'chip';
-                chip.innerText = s.label;
-                chip.onclick = () => sendPrompt(s.text);
-                sugContainer.appendChild(chip);
+        const pointLight1 = new THREE.PointLight(0x6366f1, 3, 100);
+        pointLight1.position.set(20, 20, 20);
+        scene.add(pointLight1);
+
+        const pointLight2 = new THREE.PointLight(0x06b6d4, 3, 100);
+        pointLight2.position.set(-20, -20, 20);
+        scene.add(pointLight2);
+
+        // 3. Creating Multiple 3D Geometries
+        const shapes = [];
+        const geometries = [
+            new THREE.IcosahedronGeometry(1.2, 0),    // مجسم متعدد الأوجه
+            new THREE.TorusGeometry(1, 0.3, 16, 100),   // حلقة دونات
+            new THREE.BoxGeometry(1.5, 1.5, 1.5),       // مكعب
+            new THREE.SphereGeometry(1, 32, 32),        // كرة
+            new THREE.OctahedronGeometry(1.2, 0),      // هرمي مزدوج
+            new THREE.TorusKnotGeometry(0.8, 0.25, 100, 16) // عقدة ثلاثية الأبعاد
+        ];
+
+        // مواد بصرية براقة مع الشبكات (Wireframe & Wireframe Glow)
+        for (let i = 0; i < 70; i++) {
+            const randomGeo = geometries[Math.floor(Math.random() * geometries.length)];
+            const color = Math.random() > 0.5 ? 0x6366f1 : (Math.random() > 0.5 ? 0x06b6d4 : 0xa855f7);
+            
+            const material = new THREE.MeshStandardMaterial({
+                color: color,
+                roughness: 0.2,
+                metalness: 0.8,
+                wireframe: Math.random() > 0.6 // بعض الأشكال تكون هيكلية شفافة
             });
+
+            const mesh = new THREE.Mesh(randomGeo, material);
+
+            // توزيع الأشكال عشوائياً في الفضاء 3D
+            mesh.position.x = (Math.random() - 0.5) * 60;
+            mesh.position.y = (Math.random() - 0.5) * 60;
+            mesh.position.z = (Math.random() - 0.5) * 50;
+
+            mesh.rotation.x = Math.random() * Math.PI;
+            mesh.rotation.y = Math.random() * Math.PI;
+
+            const scale = Math.random() * 1.5 + 0.5;
+            mesh.scale.set(scale, scale, scale);
+
+            // سرعات دوران مختلفة لكل شكل
+            mesh.userData = {
+                rotSpeedX: (Math.random() - 0.5) * 0.02,
+                rotSpeedY: (Math.random() - 0.5) * 0.02,
+                floatSpeed: Math.random() * 0.01 + 0.005
+            };
+
+            shapes.push(mesh);
+            scene.add(mesh);
         }
 
-        function newChat() {
-            chatHistory = [];
-            const chatBox = document.getElementById('chatBox');
-            const t = translations[currentLang];
-            chatBox.innerHTML = `<div class="message bot">${t.welcomeMsg}</div>`;
+        // 4. Background Starfield / Particles (جزيئات مشعة)
+        const particlesGeo = new THREE.BufferGeometry();
+        const particlesCount = 800;
+        const posArray = new Float32Array(particlesCount * 3);
+
+        for (let i = 0; i < particlesCount * 3; i++) {
+            posArray[i] = (Math.random() - 0.5) * 120;
         }
 
-        function toggleLanguage() {
-            currentLang = currentLang === 'ar' ? 'en' : 'ar';
-            renderUI();
-            newChat();
+        particlesGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        const particlesMat = new THREE.PointsMaterial({
+            size: 0.15,
+            color: 0xa855f7,
+            transparent: true,
+            opacity: 0.8
+        });
+        const particlesMesh = new THREE.Points(particlesGeo, particlesMat);
+        scene.add(particlesMesh);
+
+        // 5. Mouse Interaction Effect
+        let mouseX = 0;
+        let mouseY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+            mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+        });
+
+        // 6. Animation Loop
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // تحريك كل شكل 3D حول نفسه
+            shapes.forEach(shape => {
+                shape.rotation.x += shape.userData.rotSpeedX;
+                shape.rotation.y += shape.userData.rotSpeedY;
+                shape.position.y += Math.sin(Date.now() * shape.userData.floatSpeed) * 0.02;
+            });
+
+            // تحريك جزيئات خلفية الكاميرا مع الماوس
+            particlesMesh.rotation.y = Date.now() * 0.0001;
+            
+            camera.position.x += (mouseX * 5 - camera.position.x) * 0.05;
+            camera.position.y += (-mouseY * 5 - camera.position.y) * 0.05;
+            camera.lookAt(scene.position);
+
+            renderer.render(scene, camera);
         }
+
+        animate();
+
+        // Adjust Canvas on Resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // 7. Chat Functions
+        let chatHistory = [];
 
         async function sendMessage() {
             const input = document.getElementById('userInput');
@@ -548,25 +381,23 @@
             input.value = '';
 
             chatHistory.push({ role: 'user', content: text });
-            const t = translations[currentLang];
-            const botMsgDiv = addMessage(t.thinking, 'bot');
+            const botMsgDiv = addMessage('جاري التفكير...', 'bot');
 
             try {
                 const response = await fetch('/api/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ messages: chatHistory, language: currentLang })
+                    body: JSON.stringify({ messages: chatHistory, language: 'ar' })
                 });
 
                 const data = await response.json();
-                let answer = data.answer || 'Error';
-                
-                answer = answer.replace(/[#*|_]/g, ''); // Clean markdown formatting
+                let answer = data.answer || 'حدث خطأ.';
+                answer = answer.replace(/[#*|_]/g, '');
 
                 botMsgDiv.innerText = answer;
                 chatHistory.push({ role: 'assistant', content: answer });
             } catch (err) {
-                botMsgDiv.innerText = t.errConnection;
+                botMsgDiv.innerText = 'خطأ في الاتصال.';
             }
         }
 
@@ -580,17 +411,14 @@
             return msgDiv;
         }
 
-        function sendPrompt(promptText) {
-            document.getElementById('userInput').value = promptText;
-            sendMessage();
+        function newChat() {
+            chatHistory = [];
+            document.getElementById('chatBox').innerHTML = '<div class="message bot">تم بدء محادثة جديدة! كيف يمكنني مساعدتك؟</div>';
         }
 
         function handleKey(e) {
             if (e.key === 'Enter') sendMessage();
         }
-
-        // Initialize UI
-        renderUI();
     </script>
 </body>
 </html>
