@@ -11,7 +11,7 @@ from openai import OpenAI
 
 load_dotenv()
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='.', static_folder='.')
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "").strip()
 TEXT_MODEL = os.getenv("OPENAI_MODEL", "gpt-5.6-luna").strip()
