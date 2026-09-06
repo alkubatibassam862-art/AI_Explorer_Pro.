@@ -51,21 +51,32 @@ def chat():
             "content": msg.get("content", "")
         })
 
-    try:
-        client = Groq(api_key=api_key.strip())
-        
-        # النموذج المعتمد والمتاح حالياً على Groq
-        response = client.chat.completions.create(
-            model="llama-3.1-8b-instant",
-            messages=formatted_messages,
-            temperature=0.7,
-            max_tokens=800
-        )
-        answer = response.choices[0].message.content
-        return jsonify({"answer": answer})
-    except Exception as e:
-        print(f"Groq API Error: {str(e)}")
-        return jsonify({"answer": f"خطأ في الاتصال بالمساعد: {str(e)}"}), 500
+    client = Groq(api_key=api_key.strip())
+
+    # قائمة بالنماذج المتاحة بترتيب الأفضلية
+    models_to_try = [
+        "openai/gpt-oss-20b",
+        "llama-3.3-70b-versatile",
+        "llama-3.1-8b-instant"
+    ]
+
+    last_error = None
+    for model_name in models_to_try:
+        try:
+            response = client.chat.completions.create(
+                model=model_name,
+                messages=formatted_messages,
+                temperature=0.7,
+                max_tokens=800
+            )
+            answer = response.choices[0].message.content
+            return jsonify({"answer": answer})
+        except Exception as e:
+            last_error = str(e)
+            print(f"Failed with model {model_name}: {last_error}")
+            continue
+
+    return jsonify({"answer": f"عذراً، حدث خطأ في نموذج الذكاء الاصطناعي: {last_error}"}), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
