@@ -5,16 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>3D AI World | معرض تعليمتي</title>
     <link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <!-- مكتبة Three.js لتصاميم الـ 3D -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
         :root {
-            --glass-bg: rgba(13, 20, 36, 0.65);
-            --glass-border: rgba(99, 102, 241, 0.35);
+            /* جعل الخلفيات فائقة الشفافية لتظهر الأشكال خلفها بوضوح */
+            --glass-bg: rgba(10, 15, 30, 0.35);
+            --glass-border: rgba(99, 102, 241, 0.4);
             --primary-glow: #6366f1;
             --accent-cyan: #06b6d4;
             --text-main: #f8fafc;
-            --text-muted: #94a3b8;
+            --text-muted: #cbd5e1;
+            --user-msg: linear-gradient(135deg, rgba(79, 70, 229, 0.85), rgba(147, 51, 234, 0.85));
+            --bot-msg: rgba(15, 23, 42, 0.75);
         }
 
         * {
@@ -25,14 +27,13 @@
         }
 
         body {
-            background-color: #030508;
+            background-color: #020408;
             color: var(--text-main);
             min-height: 100vh;
             overflow: hidden;
             position: relative;
         }
 
-        /* الكانفاس الخاص بالـ 3D خلف كل العناصر */
         #webgl-canvas {
             position: absolute;
             top: 0;
@@ -42,99 +43,122 @@
             z-index: 1;
         }
 
-        /* واجهة المستخدم الزجاجية فوق الـ 3D */
         .app-layout {
             position: relative;
             z-index: 2;
             width: 100vw;
             height: 100vh;
             display: grid;
-            grid-template-columns: 340px 1fr;
+            grid-template-columns: 280px 1fr;
             gap: 20px;
             padding: 20px;
-            pointer-events: none; /* يسمح بالتفاعل مع الـ 3D في الخلفية */
+            pointer-events: none;
         }
 
         .interactive {
-            pointer-events: auto; /* تفعيل التفاعل مع البطاقات والأزرار */
+            pointer-events: auto;
         }
 
         /* Sidebar Styling */
         .sidebar {
             background: var(--glass-bg);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border: 1px solid var(--glass-border);
-            border-radius: 28px;
-            padding: 25px;
+            border-radius: 24px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             text-align: center;
         }
 
         .brand-badge {
-            width: 60px;
-            height: 60px;
+            width: 50px;
+            height: 50px;
             background: linear-gradient(135deg, var(--primary-glow), var(--accent-cyan));
-            border-radius: 18px;
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 26px;
+            font-size: 22px;
             font-weight: 700;
-            margin: 0 auto 12px auto;
-            box-shadow: 0 0 25px rgba(99, 102, 241, 0.6);
+            margin: 0 auto 10px auto;
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.6);
         }
 
+        .sidebar h2 { font-size: 1.1rem; }
+        .sidebar p { font-size: 0.75rem; color: var(--text-muted); }
+
         .qr-card {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 18px;
+            padding: 12px;
             width: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .qr-img {
-            width: 150px;
-            height: 150px;
+            width: 130px;
+            height: 130px;
             border-radius: 12px;
             background: #fff;
-            padding: 8px;
+            padding: 6px;
             box-shadow: 0 0 20px rgba(6, 182, 212, 0.4);
         }
 
-        /* Chat Window */
+        /* Chat Container */
         .chat-container {
             background: var(--glass-bg);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border: 1px solid var(--glass-border);
-            border-radius: 28px;
+            border-radius: 24px;
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
 
         .chat-header {
-            padding: 18px 25px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            background: rgba(8, 13, 24, 0.4);
+            padding: 16px 22px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(8, 13, 24, 0.3);
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
 
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            background: var(--primary-glow);
+            border-color: var(--primary-glow);
+        }
+
         .chat-area {
             flex: 1;
-            padding: 25px;
+            padding: 20px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
@@ -142,63 +166,91 @@
         }
 
         .message {
-            max-width: 75%;
-            padding: 14px 20px;
-            border-radius: 18px;
-            font-size: 0.92rem;
-            line-height: 1.6;
+            max-width: 70%;
+            padding: 12px 18px;
+            border-radius: 16px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            backdrop-filter: blur(5px);
         }
 
         .message.user {
             align-self: flex-start;
-            background: linear-gradient(135deg, #4f46e5, #9333ea);
+            background: var(--user-msg);
             color: #fff;
             border-bottom-right-radius: 4px;
         }
 
         .message.bot {
             align-self: flex-end;
-            background: rgba(26, 35, 58, 0.85);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: var(--bot-msg);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             border-bottom-left-radius: 4px;
         }
 
-        .input-area {
-            padding: 18px 25px;
-            background: rgba(8, 13, 24, 0.6);
+        /* الأسئلة المقترحة (Chips) */
+        .suggestions {
             display: flex;
-            gap: 12px;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 10px 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .chip {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: var(--text-main);
+            padding: 6px 14px;
+            border-radius: 18px;
+            font-size: 0.78rem;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .chip:hover {
+            background: var(--primary-glow);
+            border-color: var(--primary-glow);
+        }
+
+        .input-area {
+            padding: 16px 20px;
+            background: rgba(8, 13, 24, 0.4);
+            display: flex;
+            gap: 10px;
         }
 
         .input-area input {
             flex: 1;
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.08);
             border: 1px solid var(--glass-border);
-            padding: 14px 20px;
-            border-radius: 14px;
+            padding: 12px 18px;
+            border-radius: 12px;
             color: #fff;
             outline: none;
+            font-size: 0.9rem;
         }
 
-        .send-btn, .action-btn {
+        .send-btn {
             background: linear-gradient(135deg, var(--primary-glow), var(--accent-cyan));
             color: #fff;
             border: none;
-            padding: 12px 24px;
-            border-radius: 14px;
+            padding: 12px 22px;
+            border-radius: 12px;
             font-weight: 600;
             cursor: pointer;
         }
 
         @media (max-width: 900px) {
-            .app-layout { grid-template-columns: 1fr; height: auto; overflow-y: auto; }
-            body { overflow-y: auto; }
+            .app-layout { grid-template-columns: 1fr; height: auto; }
+            .sidebar { order: 2; }
         }
     </style>
 </head>
 <body>
 
-    <!-- الكانفاس المسؤول عن رندر الأشكال الـ 3D -->
     <canvas id="webgl-canvas"></canvas>
 
     <div class="app-layout">
@@ -206,101 +258,99 @@
         <div class="sidebar interactive">
             <div>
                 <div class="brand-badge">3D</div>
-                <h2>معرض تعليمتي</h2>
-                <p style="font-size: 0.8rem; color: var(--text-muted);">عالم الذكاء الاصطناعي التفاعلي</p>
+                <h2 id="sbTitle">معرض تعليمتي</h2>
+                <p id="sbSub">جناح هندسة الذكاء الاصطناعي</p>
             </div>
 
             <div class="qr-card">
                 <img src="/qr" alt="QR Code" class="qr-img">
-                <p style="font-size: 0.8rem; color: #c7d2fe;">امسح الكود لفتح الشات عبر الجوال 📱</p>
+                <p id="qrTxt" style="font-size: 0.75rem; color: #c7d2fe;">امسح الكود لفتح المحادثة عبر الجوال 📱</p>
             </div>
 
-            <div style="font-size: 0.75rem; color: var(--text-muted);">حرك الماوس لتتدفق الأشكال الـ 3D ✨</div>
+            <div id="sbFooter" style="font-size: 0.7rem; color: var(--text-muted);">حرك الماوس لتتدفق الأشكال الـ 3D ✨</div>
         </div>
 
         <!-- Chat Container -->
         <div class="chat-container interactive">
             <div class="chat-header">
-                <h3>🤖 المساعد الذكي ثلاثي الأبعاد</h3>
-                <div>
-                    <button class="action-btn" onclick="newChat()" style="padding: 8px 14px; font-size: 0.8rem;">🔄 محادثة جديدة</button>
+                <h3 id="headerTitle" style="font-size: 1rem;">🤖 المساعد الذكي للهندسة والتكنولوجيا</h3>
+                <div class="header-actions">
+                    <button class="action-btn" onclick="newChat()">🔄 <span id="btnNewChat">محادثة جديدة</span></button>
+                    <button class="action-btn" onclick="toggleLanguage()">🌐 <span id="btnLang">English</span></button>
                 </div>
             </div>
 
             <div class="chat-area" id="chatBox">
-                <div class="message bot">أهلاً بك! استمتع بالتصميم الـ 3D التفاعلي في الخلفية واسألني عن أي شيء! 🚀</div>
+                <div class="message bot" id="welcomeMsg">أهلاً بك في جناح الذكاء الاصطناعي! 🚀 اسألني عن أي موضوع وستجد إجابة فورية.</div>
             </div>
+
+            <!-- الأسئلة المقترحة -->
+            <div class="suggestions" id="suggestionsBox"></div>
 
             <div class="input-area">
                 <input type="text" id="userInput" placeholder="اكتب سؤالك هنا..." onkeypress="handleKey(event)">
-                <button class="send-btn" onclick="sendMessage()">إرسال</button>
+                <button class="send-btn" id="sendBtnText" onclick="sendMessage()">إرسال</button>
             </div>
         </div>
     </div>
 
-    <!-- 3D Engine Script using Three.js -->
+    <!-- 3D Engine Script -->
     <script>
-        // 1. Scene, Camera, Renderer Setup
         const canvas = document.getElementById('webgl-canvas');
         const scene = new THREE.Scene();
-        scene.fog = new THREE.FogExp2(0x030508, 0.015);
+        scene.fog = new THREE.FogExp2(0x020408, 0.012);
 
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.z = 30;
+        camera.position.z = 28;
 
         const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-        // 2. Lights
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+        const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
         scene.add(ambientLight);
 
-        const pointLight1 = new THREE.PointLight(0x6366f1, 3, 100);
+        const pointLight1 = new THREE.PointLight(0x6366f1, 4, 100);
         pointLight1.position.set(20, 20, 20);
         scene.add(pointLight1);
 
-        const pointLight2 = new THREE.PointLight(0x06b6d4, 3, 100);
+        const pointLight2 = new THREE.PointLight(0x06b6d4, 4, 100);
         pointLight2.position.set(-20, -20, 20);
         scene.add(pointLight2);
 
-        // 3. Creating Multiple 3D Geometries
+        // أشكال 3D متعدّدة وكبيرة
         const shapes = [];
         const geometries = [
-            new THREE.IcosahedronGeometry(1.2, 0),    // مجسم متعدد الأوجه
-            new THREE.TorusGeometry(1, 0.3, 16, 100),   // حلقة دونات
-            new THREE.BoxGeometry(1.5, 1.5, 1.5),       // مكعب
-            new THREE.SphereGeometry(1, 32, 32),        // كرة
-            new THREE.OctahedronGeometry(1.2, 0),      // هرمي مزدوج
-            new THREE.TorusKnotGeometry(0.8, 0.25, 100, 16) // عقدة ثلاثية الأبعاد
+            new THREE.IcosahedronGeometry(1.6, 0),
+            new THREE.TorusGeometry(1.4, 0.4, 16, 100),
+            new THREE.BoxGeometry(1.8, 1.8, 1.8),
+            new THREE.SphereGeometry(1.3, 32, 32),
+            new THREE.OctahedronGeometry(1.5, 0),
+            new THREE.TorusKnotGeometry(1.1, 0.3, 100, 16)
         ];
 
-        // مواد بصرية براقة مع الشبكات (Wireframe & Wireframe Glow)
-        for (let i = 0; i < 70; i++) {
+        for (let i = 0; i < 80; i++) {
             const randomGeo = geometries[Math.floor(Math.random() * geometries.length)];
             const color = Math.random() > 0.5 ? 0x6366f1 : (Math.random() > 0.5 ? 0x06b6d4 : 0xa855f7);
             
             const material = new THREE.MeshStandardMaterial({
                 color: color,
-                roughness: 0.2,
-                metalness: 0.8,
-                wireframe: Math.random() > 0.6 // بعض الأشكال تكون هيكلية شفافة
+                roughness: 0.1,
+                metalness: 0.9,
+                wireframe: Math.random() > 0.5
             });
 
             const mesh = new THREE.Mesh(randomGeo, material);
-
-            // توزيع الأشكال عشوائياً في الفضاء 3D
-            mesh.position.x = (Math.random() - 0.5) * 60;
-            mesh.position.y = (Math.random() - 0.5) * 60;
+            mesh.position.x = (Math.random() - 0.5) * 65;
+            mesh.position.y = (Math.random() - 0.5) * 65;
             mesh.position.z = (Math.random() - 0.5) * 50;
 
             mesh.rotation.x = Math.random() * Math.PI;
             mesh.rotation.y = Math.random() * Math.PI;
 
-            const scale = Math.random() * 1.5 + 0.5;
+            const scale = Math.random() * 1.5 + 0.6;
             mesh.scale.set(scale, scale, scale);
 
-            // سرعات دوران مختلفة لكل شكل
             mesh.userData = {
                 rotSpeedX: (Math.random() - 0.5) * 0.02,
                 rotSpeedY: (Math.random() - 0.5) * 0.02,
@@ -311,66 +361,130 @@
             scene.add(mesh);
         }
 
-        // 4. Background Starfield / Particles (جزيئات مشعة)
+        // جزيئات الفضاء
         const particlesGeo = new THREE.BufferGeometry();
-        const particlesCount = 800;
+        const particlesCount = 900;
         const posArray = new Float32Array(particlesCount * 3);
-
         for (let i = 0; i < particlesCount * 3; i++) {
             posArray[i] = (Math.random() - 0.5) * 120;
         }
-
         particlesGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-        const particlesMat = new THREE.PointsMaterial({
-            size: 0.15,
-            color: 0xa855f7,
-            transparent: true,
-            opacity: 0.8
-        });
+        const particlesMat = new THREE.PointsMaterial({ size: 0.15, color: 0x06b6d4, transparent: true, opacity: 0.8 });
         const particlesMesh = new THREE.Points(particlesGeo, particlesMat);
         scene.add(particlesMesh);
 
-        // 5. Mouse Interaction Effect
-        let mouseX = 0;
-        let mouseY = 0;
-
+        let mouseX = 0, mouseY = 0;
         document.addEventListener('mousemove', (e) => {
             mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
             mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
         });
 
-        // 6. Animation Loop
         function animate() {
             requestAnimationFrame(animate);
-
-            // تحريك كل شكل 3D حول نفسه
             shapes.forEach(shape => {
                 shape.rotation.x += shape.userData.rotSpeedX;
                 shape.rotation.y += shape.userData.rotSpeedY;
                 shape.position.y += Math.sin(Date.now() * shape.userData.floatSpeed) * 0.02;
             });
-
-            // تحريك جزيئات خلفية الكاميرا مع الماوس
             particlesMesh.rotation.y = Date.now() * 0.0001;
-            
-            camera.position.x += (mouseX * 5 - camera.position.x) * 0.05;
-            camera.position.y += (-mouseY * 5 - camera.position.y) * 0.05;
+            camera.position.x += (mouseX * 6 - camera.position.x) * 0.05;
+            camera.position.y += (-mouseY * 6 - camera.position.y) * 0.05;
             camera.lookAt(scene.position);
-
             renderer.render(scene, camera);
         }
-
         animate();
 
-        // Adjust Canvas on Resize
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
-        // 7. Chat Functions
+        // Chat & Multi-language Logic
         let chatHistory = [];
+        let currentLang = 'ar';
+
+        const translations = {
+            ar: {
+                sbTitle: "معرض تعليمتي",
+                sbSub: "جناح هندسة الذكاء الاصطناعي",
+                qrTxt: "امسح الكود لفتح المحادثة عبر الجوال 📱",
+                sbFooter: "حرك الماوس لتتدفق الأشكال الـ 3D ✨",
+                headerTitle: "🤖 المساعد الذكي للهندسة والتكنولوجيا",
+                btnNewChat: "محادثة جديدة",
+                btnLang: "English",
+                welcomeMsg: "أهلاً بك في جناح الذكاء الاصطناعي! 🚀 اسألني عن أي موضوع وستجد إجابة فورية.",
+                inputPh: "اكتب سؤالك هنا...",
+                sendBtn: "إرسال",
+                thinking: "جاري التفكير...",
+                errConnection: "حدث خطأ في الاتصال.",
+                suggestions: [
+                    { label: "ما هو الذكاء الاصطناعي؟", text: "ما هو الذكاء الاصطناعي ببساطة؟" },
+                    { label: "هل يستبدل الوظائف؟", text: "هل يستبدل الذكاء الاصطناعي الوظائف؟" },
+                    { label: "الفرق بين AI و ML", text: "ما الفرق بين AI و ML؟" },
+                    { label: "كيف أبدأ التعلم؟", text: "كيف أبدأ تعلم البرمجة والذكاء الاصطناعي؟" }
+                ]
+            },
+            en: {
+                sbTitle: "Talimati Exhibition",
+                sbSub: "AI Engineering Pavilion",
+                qrTxt: "Scan QR code to chat on mobile 📱",
+                sbFooter: "Move mouse to float 3D shapes ✨",
+                headerTitle: "🤖 AI Smart Assistant",
+                btnNewChat: "New Chat",
+                btnLang: "العربية",
+                welcomeMsg: "Welcome to the AI Pavilion! 🚀 Ask me anything about technology or programming.",
+                inputPh: "Type your question here...",
+                sendBtn: "Send",
+                thinking: "Thinking...",
+                errConnection: "Connection error.",
+                suggestions: [
+                    { label: "What is AI?", text: "What is Artificial Intelligence in simple terms?" },
+                    { label: "Will AI replace jobs?", text: "Will AI replace human jobs?" },
+                    { label: "AI vs Machine Learning", text: "What is the difference between AI and ML?" },
+                    { label: "How to start learning?", text: "How can I start learning programming and AI?" }
+                ]
+            }
+        };
+
+        function renderUI() {
+            const t = translations[currentLang];
+            document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+            document.documentElement.lang = currentLang;
+
+            document.getElementById('sbTitle').innerText = t.sbTitle;
+            document.getElementById('sbSub').innerText = t.sbSub;
+            document.getElementById('qrTxt').innerText = t.qrTxt;
+            document.getElementById('sbFooter').innerText = t.sbFooter;
+            document.getElementById('headerTitle').innerText = t.headerTitle;
+            document.getElementById('btnNewChat').innerText = t.btnNewChat;
+            document.getElementById('btnLang').innerText = t.btnLang;
+            document.getElementById('userInput').placeholder = t.inputPh;
+            document.getElementById('sendBtnText').innerText = t.sendBtn;
+
+            const sugContainer = document.getElementById('suggestionsBox');
+            sugContainer.innerHTML = '';
+            t.suggestions.forEach(s => {
+                const chip = document.createElement('div');
+                chip.className = 'chip';
+                chip.innerText = s.label;
+                chip.onclick = () => sendPrompt(s.text);
+                sugContainer.appendChild(chip);
+            });
+        }
+
+        function newChat() {
+            chatHistory = [];
+            const chatBox = document.getElementById('chatBox');
+            const t = translations[currentLang];
+            chatBox.innerHTML = `<div class="message bot">${t.welcomeMsg}</div>`;
+        }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'ar' ? 'en' : 'ar';
+            renderUI();
+            newChat();
+        }
 
         async function sendMessage() {
             const input = document.getElementById('userInput');
@@ -381,23 +495,24 @@
             input.value = '';
 
             chatHistory.push({ role: 'user', content: text });
-            const botMsgDiv = addMessage('جاري التفكير...', 'bot');
+            const t = translations[currentLang];
+            const botMsgDiv = addMessage(t.thinking, 'bot');
 
             try {
                 const response = await fetch('/api/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ messages: chatHistory, language: 'ar' })
+                    body: JSON.stringify({ messages: chatHistory, language: currentLang })
                 });
 
                 const data = await response.json();
-                let answer = data.answer || 'حدث خطأ.';
+                let answer = data.answer || 'Error';
                 answer = answer.replace(/[#*|_]/g, '');
 
                 botMsgDiv.innerText = answer;
                 chatHistory.push({ role: 'assistant', content: answer });
             } catch (err) {
-                botMsgDiv.innerText = 'خطأ في الاتصال.';
+                botMsgDiv.innerText = t.errConnection;
             }
         }
 
@@ -411,14 +526,16 @@
             return msgDiv;
         }
 
-        function newChat() {
-            chatHistory = [];
-            document.getElementById('chatBox').innerHTML = '<div class="message bot">تم بدء محادثة جديدة! كيف يمكنني مساعدتك؟</div>';
+        function sendPrompt(promptText) {
+            document.getElementById('userInput').value = promptText;
+            sendMessage();
         }
 
         function handleKey(e) {
             if (e.key === 'Enter') sendMessage();
         }
+
+        renderUI();
     </script>
 </body>
 </html>
