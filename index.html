@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#05070d">
+    <meta name="description" content="AI Explorer - اكتشف عالم الذكاء الاصطناعي">
     <title>AI Explorer | معرض تعليمتي</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -18,29 +19,31 @@
         }
 
         :root {
-            --bg: #05070d;
-            --panel: rgba(13, 17, 28, 0.72);
-            --panel-strong: rgba(17, 22, 36, 0.9);
+            --bg: #04060b;
+            --panel: rgba(13, 18, 32, 0.72);
+            --panel-2: rgba(18, 24, 42, 0.86);
             --border: rgba(255, 255, 255, 0.09);
-            --text: #f5f7ff;
-            --muted: #8e97aa;
+            --text: #f6f8ff;
+            --muted: #8993aa;
             --blue: #6d8cff;
-            --cyan: #52d9ff;
-            --purple: #a978ff;
+            --cyan: #4edcff;
+            --purple: #a875ff;
+            --green: #5ff0c0;
         }
 
-        html, body {
-            width: 100%;
-            min-height: 100%;
+        html {
+            scroll-behavior: smooth;
         }
 
         body {
+            min-height: 100vh;
             font-family: "Readex Pro", sans-serif;
-            background:
-                radial-gradient(circle at 50% -10%, rgba(91, 111, 255, 0.18), transparent 35%),
-                radial-gradient(circle at 10% 80%, rgba(82, 217, 255, 0.07), transparent 30%),
-                var(--bg);
             color: var(--text);
+            background:
+                radial-gradient(circle at 50% -15%, rgba(83, 102, 255, 0.2), transparent 34%),
+                radial-gradient(circle at 5% 55%, rgba(64, 211, 255, 0.06), transparent 28%),
+                radial-gradient(circle at 95% 75%, rgba(167, 117, 255, 0.06), transparent 28%),
+                var(--bg);
             overflow-x: hidden;
         }
 
@@ -51,101 +54,101 @@
             height: 100%;
             z-index: 0;
             pointer-events: none;
-            opacity: 0.75;
+            opacity: 0.7;
         }
 
         .page {
             position: relative;
             z-index: 1;
-            min-height: 100vh;
-            padding: 26px 18px 40px;
-        }
-
-        .app {
-            width: min(1000px, 100%);
+            width: min(1120px, calc(100% - 30px));
             margin: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
+            padding: 24px 0 45px;
         }
 
         .topbar {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 16px;
+            margin-bottom: 52px;
         }
 
         .brand {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 11px;
         }
 
-        .brand-mark {
-            width: 42px;
-            height: 42px;
+        .brand-icon {
+            width: 43px;
+            height: 43px;
             border-radius: 14px;
             display: grid;
             place-items: center;
-            background: linear-gradient(135deg, rgba(109, 140, 255, 0.3), rgba(82, 217, 255, 0.08));
-            border: 1px solid rgba(109, 140, 255, 0.35);
-            box-shadow: 0 0 30px rgba(109, 140, 255, 0.12), inset 0 0 20px rgba(255, 255, 255, 0.03);
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(109, 140, 255, 0.3),
+                    rgba(78, 220, 255, 0.08)
+                );
+            border: 1px solid rgba(109, 140, 255, 0.3);
+            box-shadow:
+                0 0 30px rgba(109, 140, 255, 0.14),
+                inset 0 0 18px rgba(255, 255, 255, 0.03);
         }
 
-        .brand-mark span {
+        .brand-core {
             width: 12px;
             height: 12px;
             border-radius: 50%;
             background: var(--cyan);
-            box-shadow: 0 0 10px var(--cyan), 0 0 24px rgba(82, 217, 255, 0.8);
+            box-shadow:
+                0 0 10px var(--cyan),
+                0 0 25px rgba(78, 220, 255, 0.8);
         }
 
-        .brand-text strong {
+        .brand strong {
             display: block;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 600;
         }
 
-        .brand-text small {
-            display: block;
-            color: var(--muted);
-            font-size: 10px;
-            margin-top: 2px;
+        .brand small {
+            color: #68738b;
+            font-size: 9px;
         }
 
-        .top-actions {
+        .actions {
             display: flex;
             gap: 8px;
         }
 
-        .top-button {
-            height: 40px;
-            padding: 0 15px;
-            border-radius: 12px;
+        .action {
+            height: 38px;
+            padding: 0 14px;
+            border-radius: 11px;
             border: 1px solid var(--border);
             background: rgba(255, 255, 255, 0.035);
-            color: #dce2f0;
+            color: #cbd3e4;
+            font-family: inherit;
+            font-size: 10px;
             cursor: pointer;
             transition: 0.2s ease;
-            font-size: 11px;
-            font-family: inherit;
         }
 
-        .top-button:hover {
-            background: rgba(255, 255, 255, 0.07);
-            border-color: rgba(109, 140, 255, 0.35);
+        .action:hover {
+            background: rgba(109, 140, 255, 0.1);
+            border-color: rgba(109, 140, 255, 0.3);
         }
 
         .hero {
             text-align: center;
-            margin-bottom: 10px;
+            margin-bottom: 55px;
         }
 
-        .orb-wrapper {
-            width: 120px;
-            height: 120px;
-            margin: 0 auto 20px;
+        .orb-container {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 25px;
             position: relative;
             display: grid;
             place-items: center;
@@ -153,474 +156,247 @@
 
         .orb-glow {
             position: absolute;
-            inset: 5px;
+            inset: 10px;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(82, 217, 255, 0.28), rgba(109, 140, 255, 0.14) 38%, transparent 70%);
-            filter: blur(12px);
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(78, 220, 255, 0.35),
+                    rgba(109, 140, 255, 0.15) 42%,
+                    transparent 72%
+                );
+            filter: blur(14px);
             animation: pulse 3s ease-in-out infinite;
         }
 
         .orb-ring {
             position: absolute;
-            inset: 12px;
+            inset: 15px;
             border-radius: 50%;
             border: 1px solid rgba(109, 140, 255, 0.3);
-            box-shadow: 0 0 25px rgba(109, 140, 255, 0.15), inset 0 0 25px rgba(82, 217, 255, 0.08);
+            box-shadow:
+                0 0 35px rgba(109, 140, 255, 0.14),
+                inset 0 0 25px rgba(78, 220, 255, 0.08);
             animation: rotate 10s linear infinite;
         }
 
-        .orb {
-            position: relative;
-            width: 75px;
-            height: 75px;
+        .orb-ring::before {
+            content: "";
+            position: absolute;
+            width: 7px;
+            height: 7px;
+            top: 9px;
+            left: 30px;
             border-radius: 50%;
-            background: radial-gradient(circle at 35% 28%, #dffaff 0%, #83eaff 10%, #5b75ff 35%, #30246e 68%, #0c0d1c 100%);
-            box-shadow: 0 0 25px rgba(82, 217, 255, 0.55), 0 0 70px rgba(109, 140, 255, 0.35);
-            animation: orbFloat 4s ease-in-out infinite;
+            background: var(--cyan);
+            box-shadow: 0 0 14px var(--cyan);
+        }
+
+        .orb {
+            width: 91px;
+            height: 91px;
+            position: relative;
+            border-radius: 50%;
+            background:
+                radial-gradient(
+                    circle at 34% 25%,
+                    #ecffff 0%,
+                    #91eeff 9%,
+                    #657fff 33%,
+                    #352675 63%,
+                    #0a0c18 100%
+                );
+            box-shadow:
+                0 0 25px rgba(78, 220, 255, 0.55),
+                0 0 75px rgba(109, 140, 255, 0.34),
+                inset -18px -18px 30px rgba(0, 0, 0, 0.4);
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .orb::before,
+        .orb::after {
+            content: "";
+            position: absolute;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        .orb::before {
+            inset: 15px;
+        }
+
+        .orb::after {
+            inset: 29px;
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .hero-label {
+            color: #68758f;
+            font-size: 9px;
+            letter-spacing: 4px;
+            margin-bottom: 12px;
         }
 
         .hero h1 {
-            font-size: clamp(24px, 4vw, 40px);
+            font-size: clamp(30px, 5vw, 49px);
+            line-height: 1.3;
             font-weight: 600;
+            letter-spacing: -1px;
         }
 
         .hero h1 span {
-            background: linear-gradient(90deg, #fff, #93dfff, #9b8cff);
+            background: linear-gradient(
+                90deg,
+                #ffffff,
+                #8de8ff,
+                #a984ff
+            );
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
         }
 
         .hero p {
-            max-width: 550px;
-            margin: 8px auto 0;
+            width: min(600px, 100%);
+            margin: 13px auto 0;
             color: var(--muted);
-            font-size: 12px;
-            line-height: 1.8;
+            font-size: 11px;
+            line-height: 2;
         }
 
-        /* نافذة المحادثة */
-        .chat-card {
-            background: var(--panel);
+        .section-title {
+            margin-bottom: 16px;
+        }
+
+        .section-title small {
+            display: block;
+            color: var(--cyan);
+            font-size: 8px;
+            letter-spacing: 3px;
+            margin-bottom: 5px;
+        }
+
+        .section-title h2 {
+            font-size: 17px;
+            font-weight: 500;
+        }
+
+        .explore-section {
+            margin-bottom: 38px;
+        }
+
+        .explore-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 11px;
+        }
+
+        .explore-card {
+            min-height: 128px;
+            padding: 17px;
+            text-align: right;
+            border-radius: 18px;
             border: 1px solid var(--border);
-            border-radius: 24px;
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(20, 27, 47, 0.82),
+                    rgba(9, 13, 24, 0.7)
+                );
+            color: white;
+            font-family: inherit;
+            cursor: pointer;
+            position: relative;
             overflow: hidden;
-            backdrop-filter: blur(22px);
-            -webkit-backdrop-filter: blur(22px);
-            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.32);
+            transition:
+                transform 0.25s ease,
+                border-color 0.25s ease,
+                background 0.25s ease;
         }
 
-        .chat-header {
-            padding: 14px 20px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .chat-status {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #cbd3e5;
-            font-size: 11px;
-        }
-
-        .status-dot {
-            width: 7px;
-            height: 7px;
+        .explore-card::before {
+            content: "";
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            left: -30px;
+            bottom: -40px;
             border-radius: 50%;
-            background: #63e6be;
-            box-shadow: 0 0 10px rgba(99, 230, 190, 0.7);
+            background: rgba(109, 140, 255, 0.13);
+            filter: blur(15px);
         }
 
-        .messages {
-            height: 380px;
-            overflow-y: auto;
-            padding: 20px;
-            scroll-behavior: smooth;
+        .explore-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(109, 140, 255, 0.4);
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(28, 37, 67, 0.92),
+                    rgba(10, 15, 28, 0.82)
+                );
         }
 
-        .welcome {
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
+        .card-number {
+            color: #59657d;
+            font-size: 8px;
+            margin-bottom: 13px;
         }
 
-        .welcome h2 { font-size: 18px; font-weight: 500; margin-bottom: 6px; }
-        .welcome p { color: var(--muted); font-size: 11px; }
-
-        .message {
-            display: flex;
-            margin-bottom: 14px;
-            animation: messageIn 0.25s ease;
-        }
-
-        .message.user { justify-content: flex-start; }
-        .message.assistant { justify-content: flex-end; }
-
-        .message-bubble {
-            max-width: min(80%, 600px);
-            padding: 12px 16px;
-            border-radius: 16px;
-            font-size: 12px;
-            line-height: 1.8;
-            white-space: pre-wrap;
-        }
-
-        .message.user .message-bubble {
-            background: rgba(109, 140, 255, 0.15);
-            border: 1px solid rgba(109, 140, 255, 0.25);
-            border-bottom-right-radius: 4px;
-        }
-
-        .message.assistant .message-bubble {
-            background: rgba(255, 255, 255, 0.045);
-            border: 1px solid var(--border);
-            border-bottom-left-radius: 4px;
-        }
-
-        .suggestions {
-            padding: 0 20px 14px;
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .suggestion {
-            border: 1px solid var(--border);
-            background: rgba(255, 255, 255, 0.025);
-            color: #aeb7ca;
-            border-radius: 12px;
-            padding: 8px 14px;
-            font-size: 10px;
-            cursor: pointer;
-            transition: 0.2s ease;
-            font-family: inherit;
-        }
-
-        .suggestion:hover {
-            color: white;
-            border-color: rgba(109, 140, 255, 0.35);
-            background: rgba(109, 140, 255, 0.1);
-        }
-
-        .input-bar {
-            padding: 14px 20px;
-            background: var(--panel-strong);
-            border-top: 1px solid var(--border);
-            display: flex;
-            gap: 12px;
-        }
-
-        .input-bar input {
-            flex: 1;
-            background: rgba(255, 255, 255, 0.035);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 10px 16px;
-            color: var(--text);
-            font-family: inherit;
-            font-size: 11px;
-            outline: none;
-        }
-
-        .send-btn {
-            background: linear-gradient(135deg, var(--blue), var(--purple));
-            color: white;
-            border: none;
-            border-radius: 12px;
-            padding: 0 22px;
-            font-size: 11px;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 0 0 20px rgba(109, 140, 255, 0.25);
-            font-family: inherit;
-        }
-
-        /* 3. بطاقة الـ QR Code السفلي */
-        .exhibition-card {
-            background: var(--panel);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 18px 24px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            backdrop-filter: blur(20px);
-            gap: 16px;
-        }
-
-        .exhibition-info {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
-
-        .badge-ai {
-            width: 48px;
-            height: 48px;
-            border-radius: 14px;
-            background: linear-gradient(135deg, var(--blue), var(--cyan));
+        .card-icon {
+            width: 33px;
+            height: 33px;
             display: grid;
             place-items: center;
-            font-weight: 700;
-            font-size: 16px;
-            color: #000;
-            box-shadow: 0 0 20px rgba(82, 217, 255, 0.4);
+            border-radius: 10px;
+            margin-bottom: 11px;
+            background: rgba(109, 140, 255, 0.1);
+            border: 1px solid rgba(109, 140, 255, 0.18);
+            color: var(--cyan);
+            font-size: 14px;
         }
 
-        .qr-box {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: rgba(255, 255, 255, 0.03);
+        .explore-card h3 {
+            font-size: 11px;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .explore-card p {
+            color: #737e95;
+            font-size: 8px;
+            line-height: 1.7;
+        }
+
+        .journey {
+            margin-bottom: 38px;
+        }
+
+        .journey-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 11px;
+        }
+
+        .step {
+            position: relative;
+            padding: 19px;
+            border-radius: 18px;
             border: 1px solid var(--border);
-            padding: 8px 14px;
-            border-radius: 14px;
+            background: rgba(13, 18, 31, 0.62);
+            backdrop-filter: blur(15px);
         }
 
-        .qr-code-img {
-            width: 55px;
-            height: 55px;
-            background: #fff;
-            padding: 3px;
-            border-radius: 8px;
-        }
-
-        @keyframes orbFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
-        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        @keyframes pulse { 0%, 100% { opacity: 0.6; transform: scale(1); } 50% { opacity: 0.9; transform: scale(1.05); } }
-        @keyframes messageIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-
-        @media (max-width: 650px) {
-            .exhibition-card { flex-direction: column; text-align: center; }
-            .exhibition-info { flex-direction: column; }
-        }
-    </style>
-</head>
-<body>
-
-    <canvas id="neural-background"></canvas>
-
-    <div class="page">
-        <div class="app">
-            <header class="topbar">
-                <div class="brand">
-                    <div class="brand-mark"><span></span></div>
-                    <div class="brand-text">
-                        <strong>AI Explorer</strong>
-                        <small>جناح الذكاء الاصطناعي</small>
-                    </div>
-                </div>
-                <div class="top-actions">
-                    <button class="top-button" onclick="newChat()">محادثة جديدة</button>
-                    <button class="top-button" id="langBtn" onclick="toggleLang()">English</button>
-                </div>
-            </header>
-
-            <section class="hero">
-                <div class="orb-wrapper">
-                    <div class="orb-glow"></div>
-                    <div class="orb-ring"></div>
-                    <div class="orb"></div>
-                </div>
-                <h1>استكشف مستقبل <span>الذكاء الاصطناعي</span></h1>
-                <p>منصة تفاعلية تدعم الإجابة عن التساؤلات التقنية والهندسية بأسلوب عصري وسريع.</p>
-            </section>
-
-            <main class="chat-card">
-                <div class="chat-header">
-                    <div class="chat-status">
-                        <span class="status-dot"></span>
-                        <span>النظام متصل وجاهز</span>
-                    </div>
-                    <span style="color: var(--muted); font-size: 10px;">Neural Network Engine</span>
-                </div>
-
-                <div class="messages" id="messagesBox">
-                    <div class="welcome" id="welcomeScreen">
-                        <div>
-                            <h2>مرحباً بك في المساعد الذكي 🚀</h2>
-                            <p>يمكنك طرح أي سؤال حول البرمجة، الهندسة، أو الذكاء الاصطناعي.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="suggestions">
-                    <button class="suggestion" onclick="sendSuggestion('ما هو الذكاء الاصطناعي؟')">ما هو الذكاء الاصطناعي؟</button>
-                    <button class="suggestion" onclick="sendSuggestion('كيف أبدأ تعلم البرمجة؟')">كيف أبدأ تعلم البرمجة؟</button>
-                    <button class="suggestion" onclick="sendSuggestion('ما الفرق بين AI و Machine Learning؟')">الفرق بين AI و ML</button>
-                </div>
-
-                <div class="input-bar">
-                    <input type="text" id="userInput" placeholder="اكتب سؤالك هنا..." onkeypress="handleKey(event)">
-                    <button class="send-btn" onclick="sendMessage()">إرسال</button>
-                </div>
-            </main>
-
-            <!-- بطاقة الـ QR والمعرض إعادة إضافتها بنجاح -->
-            <footer class="exhibition-card">
-                <div class="exhibition-info">
-                    <div class="badge-ai">AI</div>
-                    <div>
-                        <h3 style="font-size: 14px;">معرض تعليمتي</h3>
-                        <p style="color: var(--muted); font-size: 11px;">جناح هندسة الذكاء الاصطناعي</p>
-                    </div>
-                </div>
-                <div class="qr-box">
-                    <img src="/qr" alt="QR Code" class="qr-code-img">
-                    <div style="font-size: 10px; color: #c7d2fe; max-width: 120px; line-height: 1.5;">
-                        امسح الكود لفتح المحادثة عبر الجوال 📱
-                    </div>
-                </div>
-            </footer>
-        </div>
-    </div>
-
-    <script>
-        // 1. الشبكة العصبية في الخلفية
-        const canvas = document.getElementById('neural-background');
-        const ctx = canvas.getContext('2d');
-
-        function resize() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resize);
-        resize();
-
-        const particles = Array.from({ length: 45 }, () => ({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-            vx: (Math.random() - 0.5) * 0.3,
-            vy: (Math.random() - 0.5) * 0.3,
-            radius: Math.random() * 1.5 + 1
-        }));
-
-        function drawNeural() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            for (let i = 0; i < particles.length; i++) {
-                let p = particles[i];
-                p.x += p.vx;
-                p.y += p.vy;
-
-                if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
-                if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-                ctx.fillStyle = '#52d9ff';
-                ctx.fill();
-
-                for (let j = i + 1; j < particles.length; j++) {
-                    let p2 = particles[j];
-                    let dist = Math.hypot(p.x - p2.x, p.y - p2.y);
-                    if (dist < 130) {
-                        ctx.beginPath();
-                        ctx.moveTo(p.x, p.y);
-                        ctx.lineTo(p2.x, p2.y);
-                        ctx.strokeStyle = `rgba(109, 140, 255, ${1 - dist / 130})`;
-                        ctx.lineWidth = 0.5;
-                        ctx.stroke();
-                    }
-                }
-            }
-            requestAnimationFrame(drawNeural);
-        }
-        drawNeural();
-
-        // 2. منطق المحادثة وتواصل الـ API
-        let chatHistory = [];
-
-        function handleKey(e) {
-            if (e.key === 'Enter') sendMessage();
-        }
-
-        function sendSuggestion(text) {
-            document.getElementById('userInput').value = text;
-            sendMessage();
-        }
-
-        async function sendMessage() {
-            const input = document.getElementById('userInput');
-            const text = input.value.trim();
-            if (!text) return;
-
-            const welcome = document.getElementById('welcomeScreen');
-            if (welcome) welcome.remove();
-
-            const box = document.getElementById('messagesBox');
-            
-            box.innerHTML += `
-                <div class="message user">
-                    <div class="message-bubble">${text}</div>
-                </div>
-            `;
-
-            input.value = '';
-            box.scrollTop = box.scrollHeight;
-            chatHistory.push({ role: 'user', content: text });
-
-            const botMsgId = 'bot-' + Date.now();
-            box.innerHTML += `
-                <div class="message assistant">
-                    <div class="message-bubble" id="${botMsgId}">جاري التفكير...</div>
-                </div>
-            `;
-            box.scrollTop = box.scrollHeight;
-
-            try {
-                const response = await fetch('/api/chat', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ messages: chatHistory })
-                });
-
-                const data = await response.json();
-                let reply = data.answer || "حدث خطأ أثناء معالجة الطلب.";
-                reply = reply.replace(/[#*|_]/g, '');
-
-                document.getElementById(botMsgId).innerText = reply;
-                chatHistory.push({ role: 'assistant', content: reply });
-            } catch (err) {
-                document.getElementById(botMsgId).innerText = "عذراً، تعذر الاتصال بالسيرفر حالياً.";
-            }
-
-            box.scrollTop = box.scrollHeight;
-        }
-
-        function newChat() {
-            chatHistory = [];
-            const box = document.getElementById('messagesBox');
-            box.innerHTML = `
-                <div class="welcome" id="welcomeScreen">
-                    <div>
-                        <h2>مرحباً بك في المساعد الذكي 🚀</h2>
-                        <p>يمكنك طرح أي سؤال حول البرمجة، الهندسة، أو الذكاء الاصطناعي.</p>
-                    </div>
-                </div>
-            `;
-        }
-
-        function toggleLang() {
-            const btn = document.getElementById('langBtn');
-            const isAr = document.documentElement.dir === 'rtl';
-            
-            if (isAr) {
-                document.documentElement.dir = 'ltr';
-                document.documentElement.lang = 'en';
-                btn.innerText = 'العربية';
-            } else {
-                document.documentElement.dir = 'rtl';
-                document.documentElement.lang = 'ar';
-                btn.innerText = 'English';
-            }
-        }
-    </script>
-</body>
-</html>
+        .step-number {
+            width: 31px;
+            height: 31px;
+            border-radius: 10px;
+            display: grid;
+            place-items: center;
+            margin-bottom: 12px;
+            background: linear-gradient(
+                135deg,
+                rgba(109, 140, 255, 0.25),
+                rgba(168, 117, 255, 0.12)
+            );
+            border: 1px solid rgba(109, 140, 255, 0.2);
