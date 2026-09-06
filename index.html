@@ -18,6 +18,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Arabic:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
+    <!-- مكتبة توليد الـ QR تلقائياً -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
     <style>
         :root {
             --bg: #030712;
@@ -428,6 +431,9 @@
             box-shadow: 0 0 25px rgba(255, 255, 255, 0.2);
             width: 130px;
             height: 130px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .qr-frame img {
@@ -530,7 +536,6 @@
                     </div>
                 </div>
 
-                <!-- تم إبقاء الحاوية فارغة ليقوم الجافاسكربت بملئها تلقائياً باللغة المحددة -->
                 <div class="quick-prompts" id="quickPrompts"></div>
 
                 <form class="composer" id="composer">
@@ -547,9 +552,8 @@
                     <h2 id="qrTitle">امسح. افتح. استكشف.</h2>
                     <p id="qrText">يمكن للزوار مسح كود QR باستخدام الجوال لفتح تجربة AI Explorer المباشرة.</p>
                 </div>
-                <div class="qr-frame">
-                    <img src="/qr" alt="AI Explorer QR code">
-                </div>
+                <!-- حاوية توليد الـ QR كود الحقيقي تلقائياً -->
+                <div class="qr-frame" id="qrcode"></div>
             </div>
         </section>
     </main>
@@ -559,7 +563,7 @@
     </footer>
 
     <script>
-        // إعداد PWA Manifest و Service Worker تلقائياً
+        // إعداد PWA Manifest و Service Worker
         const manifestData = {
             "name": "AI Explorer",
             "short_name": "AI Explorer",
@@ -586,6 +590,16 @@
         }
 
         document.addEventListener("DOMContentLoaded", () => {
+            // توليد الـ QR Code الخاص برابط Render تلقائياً وبدقة
+            new QRCode(document.getElementById("qrcode"), {
+                text: "https://ai-explorer-pro.onrender.com",
+                width: 106,
+                height: 106,
+                colorDark : "#030712",
+                colorLight : "#ffffff",
+                correctLevel : QRCode.CorrectLevel.H
+            });
+
             const composer = document.getElementById('composer');
             const messageInput = document.getElementById('messageInput');
             const messages = document.getElementById('messages');
@@ -597,8 +611,6 @@
 
             let deferredPrompt = null;
             let chatHistory = [];
-            
-            // قراءة اللغة المحفوظة سابقاً من الـ LocalStorage للحفاظ على اللغة المختارة حتى بعد الـ Refresh
             let currentLang = localStorage.getItem('preferred_lang') || 'ar';
 
             window.addEventListener('beforeinstallprompt', (e) => {
@@ -813,7 +825,6 @@
                 return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
             }
 
-            // تطبيق اللغة المحفوظة تلقائياً فور تحميل الصفحة
             applyLanguage(currentLang);
         });
     </script>
