@@ -1,7 +1,6 @@
 import os
 import io
 import socket
-
 import qrcode
 from dotenv import load_dotenv
 from flask import Flask, jsonify, render_template, request, send_file, send_from_directory
@@ -9,6 +8,7 @@ from openai import OpenAI
 
 load_dotenv()
 
+# تهيئة تطبيق فلاسك مع السماح بالقراءة المباشرة للمجلدات
 app = Flask(__name__, template_folder='.', static_folder='static', static_url_path='/static')
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "").strip()
@@ -81,23 +81,30 @@ def qr():
 def health():
     return jsonify({"status": "ok"})
 
+# دمج التغذية المباشرة لملفات الـ CSS والـ JS للتأكد من وصول المتصفح لها دائماً
 @app.get('/style.css')
-def serve_css():
+def serve_css_root():
     if os.path.exists('style.css'):
         return send_from_directory('.', 'style.css')
     return send_from_directory('static', 'style.css')
 
 @app.get('/app.js')
-def serve_js():
+def serve_js_root():
     if os.path.exists('app.js'):
         return send_from_directory('.', 'app.js')
     return send_from_directory('static', 'app.js')
 
-@app.get('/static/<path:filename>')
-def serve_static_files(filename):
-    if os.path.exists(os.path.join('static', filename)):
-        return send_from_directory('static', filename)
-    return send_from_directory('.', filename)
+@app.get('/static/style.css')
+def serve_css_static():
+    if os.path.exists('static/style.css'):
+        return send_from_directory('static', 'style.css')
+    return send_from_directory('.', 'style.css')
+
+@app.get('/static/app.js')
+def serve_js_static():
+    if os.path.exists('static/app.js'):
+        return send_from_directory('static', 'app.js')
+    return send_from_directory('.', 'app.js')
 
 @app.post("/api/chat")
 def chat():
