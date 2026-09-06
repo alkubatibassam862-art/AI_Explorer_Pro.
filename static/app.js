@@ -10,8 +10,7 @@ const state = {
     }
 };
 
-const el = (id) => document.getElementById(id);
-
+const el = (id) => document.getElementById(id) || new Proxy({}, { get: () => () => {} });
 const translations = {
     en: {
         languageButton: "العربية",
