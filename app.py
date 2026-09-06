@@ -6,7 +6,7 @@ import socket
 import qrcode
 import requests
 from dotenv import load_dotenv
-from flask import Flask, jsonify, render_template, request, send_file
+from flask import Flask, jsonify, render_template, request, send_file, send_from_directory
 from openai import OpenAI
 
 load_dotenv()
@@ -95,6 +95,14 @@ def qr():
 @app.get("/health")
 def health():
     return jsonify({"status": "ok"})
+
+@app.get('/style.css')
+def serve_css():
+    return send_from_directory('.', 'style.css')
+
+@app.get('/app.js')
+def serve_js():
+    return send_from_directory('.', 'app.js')
 
 @app.post("/api/chat")
 def chat():
