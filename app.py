@@ -11,7 +11,7 @@ from openai import OpenAI
 
 load_dotenv()
 
-# تعديل ربط مجلد static بشكل صريح مع Flask
+# تهيئة Flask لقراءة الملفات سواء من المجلد الرئيسي أو static
 app = Flask(__name__, template_folder='.', static_folder='static', static_url_path='/static')
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "").strip()
@@ -97,18 +97,24 @@ def qr():
 def health():
     return jsonify({"status": "ok"})
 
-# دعم الملفات المباشرة ومجلد static بنفس الوقت لمنع أي أخطاء 404
+# البحث الذكي عن الملفات لمنع خطأ 404 وتصميم الصفحة المكسور
 @app.get('/style.css')
 def serve_css():
+    if os.path.exists('style.css'):
+        return send_from_directory('.', 'style.css')
     return send_from_directory('static', 'style.css')
 
 @app.get('/app.js')
 def serve_js():
+    if os.path.exists('app.js'):
+        return send_from_directory('.', 'app.js')
     return send_from_directory('static', 'app.js')
 
 @app.get('/static/<path:filename>')
 def serve_static_files(filename):
-    return send_from_directory('static', filename)
+    if os.path.exists(os.path.join('static', filename)):
+        return send_from_directory('static', filename)
+    return send_from_directory('.', filename)
 
 @app.post("/api/chat")
 def chat():
