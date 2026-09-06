@@ -530,12 +530,8 @@
                     </div>
                 </div>
 
-                <div class="quick-prompts">
-                    <button data-question="ما هو الذكاء الاصطناعي؟ اشرحه ببساطة.">ما هو AI؟</button>
-                    <button data-question="ما الفرق بين الذكاء الاصطناعي وتعلّم الآلة والتعلّم العميق؟">AI vs ML vs DL</button>
-                    <button data-question="ما هي المشاريع التي يمكنني بناؤها كمبتدئ في هندسة الذكاء الاصطناعي؟">مشاريع مبتدئة</button>
-                    <button data-question="ما هي المهارات المطلوبة لسوق العمل في المجال؟">مهارات العمل</button>
-                </div>
+                <!-- تم إبقاء الحاوية فارغة ليقوم الجافاسكربت بملئها تلقائياً باللغة المحددة -->
+                <div class="quick-prompts" id="quickPrompts"></div>
 
                 <form class="composer" id="composer">
                     <input id="messageInput" autocomplete="off" placeholder="اكتب سؤالك هنا..." maxlength="4000">
@@ -597,11 +593,14 @@
             const languageButton = document.getElementById('languageButton');
             const askButton = document.getElementById('askButton');
             const installAppBtn = document.getElementById('installAppBtn');
+            const quickPromptsContainer = document.getElementById('quickPrompts');
+
             let deferredPrompt = null;
             let chatHistory = [];
-            let currentLang = 'ar';
+            
+            // قراءة اللغة المحفوظة سابقاً من الـ LocalStorage للحفاظ على اللغة المختارة حتى بعد الـ Refresh
+            let currentLang = localStorage.getItem('preferred_lang') || 'ar';
 
-            // التقاط حدث تثبيت الـ PWA لتمكين زر التحميل المباشر
             window.addEventListener('beforeinstallprompt', (e) => {
                 e.preventDefault();
                 deferredPrompt = e;
@@ -643,7 +642,13 @@
                     qrTitle: "امسح. افتح. استكشف.",
                     qrText: "يمكن للزوار مسح كود QR باستخدام الجوال لفتح تجربة AI Explorer المباشرة.",
                     footerLabel: "معرض هندسة الذكاء الاصطناعي",
-                    installBtn: "تثبيت التطبيق 📲"
+                    installBtn: "تثبيت التطبيق 📲",
+                    prompts: [
+                        { label: "ما هو AI؟", question: "ما هو الذكاء الاصطناعي؟ اشرحه ببساطة." },
+                        { label: "AI vs ML vs DL", question: "ما الفرق بين الذكاء الاصطناعي وتعلّم الآلة والتعلّم العميق؟" },
+                        { label: "مشاريع مبتدئة", question: "ما هي المشاريع التي يمكنني بناؤها كمبتدئ في هندسة الذكاء الاصطناعي؟" },
+                        { label: "مهارات العمل", question: "ما هي المهارات المطلوبة لسوق العمل في المجال؟" }
+                    ]
                 },
                 en: {
                     langBtn: "العربية",
@@ -668,12 +673,33 @@
                     qrTitle: "Scan. Open. Explore.",
                     qrText: "Visitors can scan the QR code using their phone to open the live AI Explorer experience.",
                     footerLabel: "AI Engineering Exhibition",
-                    installBtn: "Install App 📲"
+                    installBtn: "Install App 📲",
+                    prompts: [
+                        { label: "What is AI?", question: "What is Artificial Intelligence? Explain it simply." },
+                        { label: "AI vs ML vs DL", question: "What is the difference between AI, Machine Learning, and Deep Learning?" },
+                        { label: "Beginner Projects", question: "What projects can I build as a beginner in AI engineering?" },
+                        { label: "Career Skills", question: "What skills are required for the AI job market?" }
+                    ]
                 }
             };
 
-            languageButton.addEventListener('click', () => {
-                currentLang = currentLang === 'ar' ? 'en' : 'ar';
+            function renderPrompts(prompts) {
+                if (!quickPromptsContainer) return;
+                quickPromptsContainer.innerHTML = '';
+                prompts.forEach(p => {
+                    const btn = document.createElement('button');
+                    btn.textContent = p.label;
+                    btn.addEventListener('click', () => {
+                        messageInput.value = p.question;
+                        sendMessage();
+                    });
+                    quickPromptsContainer.appendChild(btn);
+                });
+            }
+
+            function applyLanguage(lang) {
+                currentLang = lang;
+                localStorage.setItem('preferred_lang', lang);
                 const t = translations[currentLang];
 
                 document.documentElement.lang = currentLang;
@@ -707,6 +733,12 @@
                 document.getElementById('qrTitle').innerText = t.qrTitle;
                 document.getElementById('qrText').innerText = t.qrText;
                 document.getElementById('footerLabel').innerText = t.footerLabel;
+
+                renderPrompts(t.prompts);
+            }
+
+            languageButton.addEventListener('click', () => {
+                applyLanguage(currentLang === 'ar' ? 'en' : 'ar');
             });
 
             askButton.addEventListener('click', () => {
@@ -717,13 +749,6 @@
             composer.addEventListener('submit', (e) => {
                 e.preventDefault();
                 sendMessage();
-            });
-
-            document.querySelectorAll('.quick-prompts button').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    messageInput.value = btn.getAttribute('data-question');
-                    sendMessage();
-                });
             });
 
             newChatButton.addEventListener('click', () => {
@@ -772,7 +797,7 @@
                     const res = await fetch('/api/chat', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ messages: chatHistory })
+                        body: JSON.stringify({ messages: chatHistory, language: currentLang })
                     });
                     const data = await res.json();
                     const reply = data.answer || (currentLang === 'ar' ? "حدث خطأ أثناء الاتصال." : "Connection error.");
@@ -787,6 +812,9 @@
             function escapeHtml(str) {
                 return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
             }
+
+            // تطبيق اللغة المحفوظة تلقائياً فور تحميل الصفحة
+            applyLanguage(currentLang);
         });
     </script>
 </body>
