@@ -30,7 +30,6 @@ def qr_code():
 def chat():
     api_key = os.environ.get("GROQ_API_KEY")
     if not api_key:
-        print("Error: GROQ_API_KEY environment variable is missing.")
         return jsonify({"answer": "عذراً، مفتاح API غير معرف في إعدادات البيئة."}), 500
 
     data = request.json or {}
@@ -55,9 +54,9 @@ def chat():
     try:
         client = Groq(api_key=api_key.strip())
         
-        # استخدام النموذج الأكثر استقراراً ودعماً في Groq
+        # النموذج المعتمد والمتاح حالياً على Groq
         response = client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
+            model="llama-3.1-8b-instant",
             messages=formatted_messages,
             temperature=0.7,
             max_tokens=800
@@ -65,8 +64,8 @@ def chat():
         answer = response.choices[0].message.content
         return jsonify({"answer": answer})
     except Exception as e:
-        print(f"Groq API Exception Details: {str(e)}")
-        return jsonify({"answer": f"خطأ في الاتصال بالنموذج: {str(e)}"}), 500
+        print(f"Groq API Error: {str(e)}")
+        return jsonify({"answer": f"خطأ في الاتصال بالمساعد: {str(e)}"}), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
