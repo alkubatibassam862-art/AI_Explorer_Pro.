@@ -8,7 +8,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const installAppBtn = document.getElementById("installAppBtn");
     const quickPromptsContainer = document.querySelector(".quick-prompts");
 
-    let currentLang = "en";
+    // قراءة اللغة المحفوظة سابقاً من الـ LocalStorage، وإذا لم توجد تكون الإنجليزية كافتراضي
+    let currentLang = localStorage.getItem("preferred_lang") || "en";
     let chatHistory = [];
     let deferredPrompt = null;
 
@@ -67,7 +68,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // --- الترجمات والقواميس مع الاقتراحات السريعة ---
+    // --- الترجمات والقواميس مع دعم الاقتراحات السريعة ---
     const translations = {
         en: {
             brandSubtitle: "AI ENGINEERING EXPERIENCE",
@@ -165,6 +166,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function updateLanguage(lang) {
         currentLang = lang;
+        // حفظ خيار اللغة في ذاكرة المتصفح للثبات عند الـ Refresh
+        localStorage.setItem("preferred_lang", lang);
+
         const t = translations[lang];
         document.documentElement.lang = lang;
         document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
@@ -180,7 +184,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (messageInput) messageInput.placeholder = t.inputPlaceholder;
         if (installAppBtn) installAppBtn.textContent = t.installBtnText;
 
-        // تحديث أزرار الاقتراحات السريعة بلغة الصفحة الحالية
+        // إعطاء أزرار الاقتراحات السريعة الترجمة المناسبة
         renderQuickPrompts(t.prompts);
     }
 
@@ -268,6 +272,6 @@ document.addEventListener("DOMContentLoaded", () => {
         return id;
     }
 
-    // تهيئة الاقتراحات السريعة عند بداية التحميل
-    renderQuickPrompts(translations[currentLang].prompts);
+    // تطبيق وتفعيل اللغة المحفوظة تلقائياً عند تحميل الصفحة
+    updateLanguage(currentLang);
 });
